@@ -50,7 +50,7 @@ So, for example, this:
 
 Will be rendered as:
 
-			<script type="text/javascript" data-min=".min" src="no-minified-version-available.js"></script>
+			<script type="text/javascript" src="no-minified-version-available.js"></script>
 			<script type="text/javascript" data-min=".min" src="js/main.min.js"></script>
 
 On the compiled index.html.
