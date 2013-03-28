@@ -23,7 +23,7 @@ The compiled files can be found in the `/build` folder.
 	- `coffee` - CoffeeScript source files
 	- `style` - CSS and LESS source files
 	- `lib` - Third-party libs
-	- `includes` - Your css and js includes. They will be replaced into your index file. See not on includes below.
+	- `includes` - Your css and js includes. They will be replaced into your index file. See note on includes below.
 	- `index.html` - Your app entry point.
 - `test` - Unit tests source files.
 - `Gruntfile.json` - This is the configuration file for grunt. Contains all the build tasks.
