@@ -1,6 +1,7 @@
 'use strict';
 var path = require('path');
 var cheerio = require('cheerio');
+var chai = require('chai');
 var lrSnippet = require('grunt-contrib-livereload/lib/utils').livereloadSnippet;
 
 var folderMount = function folderMount(connect, point) {
@@ -54,6 +55,13 @@ module.exports = function (grunt) {
 				cwd: 'src/coffee',
 				src: ['*.coffee'],
 				dest: 'build/js/',
+				ext: '.js'
+			},
+			test: {
+				expand: true,
+				cwd: 'test/coffee',
+				src: ['*.coffee'],
+				dest: 'test/js/',
 				ext: '.js'
 			}
 		},
@@ -122,7 +130,7 @@ module.exports = function (grunt) {
 				options: {
 					port: 9001,
 					middleware: function (connect, options) {
-						return [lrSnippet, folderMount(connect, 'build/')]
+						return [lrSnippet, folderMount(connect, 'build/')];
 					}
 				}
 			}
@@ -132,6 +140,17 @@ module.exports = function (grunt) {
 				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.less'],
 				tasks: ['dev', 'livereload']
 			}
+		},
+		simplemocha: {
+			options: {
+				globals: ['should'],
+				timeout: 3000,
+				ignoreLeaks: false,
+				ui: 'bdd',
+				reporter: 'spec',
+				require: ['chai']
+			},
+			all: { src: 'test/js/**/*.js' }
 		}
 	});
 
@@ -162,4 +181,6 @@ module.exports = function (grunt) {
 	grunt.registerTask('prod', ['clean', 'copy', 'coffee', 'less', 'uglify', 'cssmin', 'replace:debug', 'replace:prod']);
 	grunt.registerTask('dev', ['clean', 'copy', 'coffee', 'less', 'replace:dev']);
 	grunt.registerTask('default', ['dev', 'livereload-start', 'connect', 'regarde']);
+
+	grunt.registerTask('test', ['coffee:test', 'simplemocha']);
 };
