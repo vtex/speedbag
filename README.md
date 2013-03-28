@@ -53,7 +53,7 @@ Will be rendered as:
 			<script type="text/javascript" src="no-minified-version-available.js"></script>
 			<script type="text/javascript" data-min=".min" src="js/main.min.js"></script>
 
-On the compiled index.html.
+On the compiled index.html **for `prod` builds**.
 
 ------
 
