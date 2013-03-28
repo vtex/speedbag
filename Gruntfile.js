@@ -1,19 +1,50 @@
 'use strict';
 var path = require('path');
+var cheerio = require('cheerio');
 var lrSnippet = require('grunt-contrib-livereload/lib/utils').livereloadSnippet;
 
 var folderMount = function folderMount(connect, point) {
 	return connect.static(path.resolve(point));
 };
 
+
 module.exports = function (grunt) {
+
+	// Replaces paths for tags with 'data-min' attr
+	// Filters out tags with 'data-ignore' attr
+	grunt.file.readMin = function (path) {
+		var file =  grunt.file.read(path);
+		var $ = cheerio.load(file);
+		var includeLabel = function(path, label) {
+			return path.substring(0, path.lastIndexOf('.')) + label + path.substring(path.lastIndexOf('.'));
+		};
+		$('link,script').each(function(i, node){
+			var minLabel = $(node).attr('data-min');
+			var path = '';
+			if (minLabel) {
+				if (node.name == 'link') {
+					path = $(node).attr('href');
+					$(node).attr('href', includeLabel(path, minLabel));
+				}
+				else if (node.name == 'script') {
+					path = $(node).attr('src');
+					$(node).attr('src', includeLabel(path, minLabel));
+				}
+			}
+			if ($(node).attr('data-ignore') != undefined) {
+				$(node).remove();
+			}
+		});
+		return $.html().replace(/\n{2,}/, '\n');
+	};
+
 	// Project configuration.
 	grunt.initConfig({
 		clean: ["build"],
 		copy: {
 			main: {
 				files: [
-					{expand: true, cwd: 'src/', src: ['**', '!coffee/**'], dest: 'build/'}
+					{expand: true, cwd: 'src/', src: ['**', '!includes/**' ,'!coffee/**', '!**/*.less'], dest: 'build/'}
 				]
 			}
 		},
@@ -58,8 +89,8 @@ module.exports = function (grunt) {
 			prod: {
 				options: {
 					variables: {
-						'includecss': '<%= grunt.file.read("src/includes/include-css.prod.html") %>',
-						'includejs': '<%= grunt.file.read("src/includes/include-js.prod.html") %>'
+						'includecss': '<%= grunt.file.readMin("src/includes/include-css.html") %>',
+						'includejs': '<%= grunt.file.readMin("src/includes/include-js.html") %>'
 					}
 				},
 				files: [
@@ -69,12 +100,20 @@ module.exports = function (grunt) {
 			dev: {
 				options: {
 					variables: {
-						'includecss': '<%= grunt.file.read("src/includes/include-css.dev.html") %>',
-						'includejs': '<%= grunt.file.read("src/includes/include-js.dev.html") %>'
+						'includecss': '<%= grunt.file.read("src/includes/include-css.html") %>',
+						'includejs': '<%= grunt.file.read("src/includes/include-js.html") %>'
 					}
 				},
 				files: [
 					{src: ['build/index.html'], dest: 'build/index.html'}
+				]
+			},
+			debug: {
+				options: {
+					variables: '<%= replace.dev.options.variables %>'
+				},
+				files: [
+					{src: ['build/index.html'], dest: 'build/index.debug.html'}
 				]
 			}
 		},
@@ -120,7 +159,7 @@ module.exports = function (grunt) {
 			}
 	);
 
-	grunt.registerTask('prod', ['clean', 'copy', 'coffee', 'less', 'uglify', 'cssmin', 'replace:prod']);
+	grunt.registerTask('prod', ['clean', 'copy', 'coffee', 'less', 'uglify', 'cssmin', 'replace:debug', 'replace:prod']);
 	grunt.registerTask('dev', ['clean', 'copy', 'coffee', 'less', 'replace:dev']);
 	grunt.registerTask('default', ['dev', 'livereload-start', 'connect', 'regarde']);
 };
