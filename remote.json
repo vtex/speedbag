@@ -14,10 +14,11 @@
 	"headers": {
 	},
 	"bounces":[
-		"/lib/.*",
-		"/js/.*",
-		"/style/.*",
-		"/index.html"
+		"lib/.*",
+		"js/.*",
+		"style/.*",
+		"/",
+		"index.html"
 	],
 	"mapping": false,
 	"mappings": {
