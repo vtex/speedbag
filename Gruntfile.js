@@ -53,7 +53,7 @@ module.exports = function (grunt) {
 			glob_to_multiple: {
 				expand: true,
 				cwd: 'src/coffee',
-				src: ['*.coffee'],
+				src: ['**/*.coffee'],
 				dest: 'build/js/',
 				ext: '.js'
 			},
@@ -137,8 +137,12 @@ module.exports = function (grunt) {
 		},
 		regarde: {
 			dev: {
-				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.less'],
+				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less'],
 				tasks: ['dev', 'livereload']
+			},
+			prod: {
+				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less'],
+				tasks: ['prod', 'livereload']
 			}
 		},
 		simplemocha: {
@@ -180,7 +184,7 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('prod', ['clean', 'copy', 'coffee', 'less', 'uglify', 'cssmin', 'replace:debug', 'replace:prod']);
 	grunt.registerTask('dev', ['clean', 'copy', 'coffee', 'less', 'replace:dev']);
-	grunt.registerTask('default', ['dev', 'livereload-start', 'connect', 'regarde']);
-
+	grunt.registerTask('devmin', ['prod', 'livereload-start', 'connect', 'regarde:prod']);
+	grunt.registerTask('default', ['dev', 'livereload-start', 'connect', 'regarde:dev']);
 	grunt.registerTask('test', ['coffee:test', 'simplemocha']);
 };
