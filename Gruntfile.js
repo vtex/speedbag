@@ -147,14 +147,14 @@ module.exports = function (grunt) {
 		},
 		simplemocha: {
 			options: {
-				globals: ['should'],
 				timeout: 3000,
 				ignoreLeaks: false,
 				ui: 'bdd',
-				reporter: 'spec',
-				require: ['chai']
+				reporter: 'spec'
 			},
-			all: { src: 'test/js/**/*.js' }
+			all: {
+				src: 'test/js/**/*.js'
+			}
 		}
 	});
 
@@ -186,5 +186,5 @@ module.exports = function (grunt) {
 	grunt.registerTask('dev', ['clean', 'copy', 'coffee', 'less', 'replace:dev']);
 	grunt.registerTask('devmin', ['prod', 'livereload-start', 'connect', 'regarde:prod']);
 	grunt.registerTask('default', ['dev', 'livereload-start', 'connect', 'regarde:dev']);
-	grunt.registerTask('test', ['coffee:test', 'simplemocha']);
+	grunt.registerTask('test', ['coffee:glob_to_multiple', 'coffee:test', 'simplemocha']);
 };
