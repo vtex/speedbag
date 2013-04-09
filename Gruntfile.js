@@ -50,7 +50,7 @@ module.exports = function (grunt) {
 			}
 		},
 		coffee: {
-			glob_to_multiple: {
+			main: {
 				expand: true,
 				cwd: 'src/coffee',
 				src: ['**/*.coffee'],
@@ -60,7 +60,7 @@ module.exports = function (grunt) {
 			test: {
 				expand: true,
 				cwd: 'test/coffee',
-				src: ['*.coffee'],
+				src: ['**/*.coffee'],
 				dest: 'test/js/',
 				ext: '.js'
 			}
@@ -186,5 +186,5 @@ module.exports = function (grunt) {
 	grunt.registerTask('dev', ['clean', 'copy', 'coffee', 'less', 'replace:dev']);
 	grunt.registerTask('devmin', ['prod', 'livereload-start', 'connect', 'regarde:prod']);
 	grunt.registerTask('default', ['dev', 'livereload-start', 'connect', 'regarde:dev']);
-	grunt.registerTask('test', ['coffee:glob_to_multiple', 'coffee:test', 'simplemocha']);
+	grunt.registerTask('test', ['coffee:main', 'coffee:test', 'simplemocha']);
 };
