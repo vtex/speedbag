@@ -61,7 +61,7 @@ module.exports = function (grunt) {
 				expand: true,
 				cwd: 'test/coffee',
 				src: ['**/*.coffee'],
-				dest: 'test/js/',
+				dest: 'build/test/js/',
 				ext: '.js'
 			}
 		},
@@ -143,7 +143,12 @@ module.exports = function (grunt) {
 			prod: {
 				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less'],
 				tasks: ['prod', 'livereload']
-			}
+			},
+			test: {
+				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less', 'test/**/*.coffee'],
+				tasks: ['test'],
+				spawn: true
+			},
 		},
 		simplemocha: {
 			options: {
@@ -153,7 +158,7 @@ module.exports = function (grunt) {
 				reporter: 'spec'
 			},
 			all: {
-				src: 'test/js/**/*.js'
+				src: 'build/test/js/**/*.js'
 			}
 		}
 	});
@@ -186,5 +191,6 @@ module.exports = function (grunt) {
 	grunt.registerTask('dev', ['clean', 'copy', 'coffee', 'less', 'replace:dev']);
 	grunt.registerTask('devmin', ['prod', 'livereload-start', 'connect', 'regarde:prod']);
 	grunt.registerTask('default', ['dev', 'livereload-start', 'connect', 'regarde:dev']);
-	grunt.registerTask('test', ['coffee:main', 'coffee:test', 'simplemocha']);
+	grunt.registerTask('test', ['dev', 'simplemocha']);
+	grunt.registerTask('devtest', ['test', 'regarde:test']);
 };

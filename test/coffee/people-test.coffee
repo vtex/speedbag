@@ -1,7 +1,11 @@
 chai = require 'chai'
 chai.should()
 
-{Man, Woman} = require '../../build/js/people'
+path = require 'path'
+buildPath = path.resolve(process.cwd(), 'build/js')
+console.log 'Using build path:', buildPath
+
+{Man, Woman} = require buildPath + '/people.js'	
 
 describe 'Man', ->
 	man1 = null
