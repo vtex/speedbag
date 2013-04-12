@@ -21,7 +21,8 @@
     "mocha": "~1.8.2",
     "remote": "~0.2.2",
     "grunt-usemin": "~0.1.10",
-    "grunt-contrib-concat": "~0.2.0"
+    "grunt-contrib-concat": "~0.2.0",
+    "grunt-string-replace": "~0.2.4"
   },
   "repository": {
     "type": "git",

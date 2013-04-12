@@ -54,6 +54,20 @@ module.exports = (grunt) ->
 		usemin:
 			html: "build/index.html"
 
+		'string-replace':
+			deploy:
+				files:
+					"deploy/<%= meta.tag %>/index.html": ["deploy/<%= meta.tag %>/index.html"]
+
+				options:
+					replacements: [
+						pattern: /src="/ig
+						replacement: 'src="$resourcesUrl$/<%= meta.commit %>/'
+					,
+						pattern: /href="/ig
+						replacement: 'href="$resourcesUrl$/<%= meta.commit %>/'
+					]
+
 		connect:
 			livereload:
 				options:
@@ -117,6 +131,7 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks "grunt-regarde"
 	grunt.loadNpmTasks "grunt-simple-mocha"
 	grunt.loadNpmTasks "grunt-usemin"
+	grunt.loadNpmTasks "grunt-string-replace"
 
 	###
 	Remote tasks
@@ -131,7 +146,10 @@ module.exports = (grunt) ->
 	grunt.registerTask "devmin", ["prod", "livereload-start", "connect", "regarde:prod"]
 	grunt.registerTask "test", ["dev", "simplemocha"]
 	grunt.registerTask "devtest", ["test", "regarde:test"]
+	# Ran before tag task
 	grunt.registerTask "deploy", ["prod", "deploy-version", "copy:deploy"]
+	# Ran after tag task
+	grunt.registerTask "deploy-tag", ["copy:tag", "string-replace:deploy"]
 
-	# Example usage of tag and copy:tag tasks
-	grunt.registerTask "deploy-master", ["deploy", "tag:master", "copy:tag"]
+	# Example usage of tag task
+	grunt.registerTask "deploy-master", ["deploy", "tag:master", "deploy-tag"]
