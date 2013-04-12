@@ -8,6 +8,7 @@ folderMount = (connect, point) -> connect.static path.resolve(point)
 module.exports = (grunt) ->
 	# Project configuration.
 	grunt.initConfig
+		resourceToken: '$resourcesUrl$'
 		pkg: grunt.file.readJSON('package.json')
 		clean: ["build", "deploy"]
 		copy:
@@ -16,6 +17,10 @@ module.exports = (grunt) ->
 				cwd: "src/"
 				src: ["**", "!includes/**", "!coffee/**", "!**/*.less"]
 				dest: "build/"
+
+			debug:
+				src: ["src/index.html"]
+				dest: "build/index.debug.html"
 
 			deploy:
 				expand: true
@@ -26,7 +31,7 @@ module.exports = (grunt) ->
 			env:
 				expand: true
 				cwd: "deploy/<%= meta.commit %>/"
-				src: ["index.html"]
+				src: ["index.html", "index.debug.html"]
 				dest: "deploy/<%= meta.env %>/"
 
 		coffee:
@@ -59,14 +64,15 @@ module.exports = (grunt) ->
 			deploy:
 				files:
 					"deploy/<%= meta.env %>/index.html": ["deploy/<%= meta.env %>/index.html"]
+					"deploy/<%= meta.env %>/index.debug.html": ["deploy/<%= meta.env %>/index.debug.html"]
 
 				options:
 					replacements: [
 						pattern: /src="/ig
-						replacement: 'src="$resourcesUrl$/<%= pkg.name %>/<%= meta.commit %>/'
+						replacement: 'src="<%= resourceToken %>/<%= pkg.name %>/<%= meta.commit %>/'
 					,
 						pattern: /href="/ig
-						replacement: 'href="$resourcesUrl$/<%= pkg.name %>/<%= meta.commit %>/'
+						replacement: 'href="<%= resourceToken %>/<%= pkg.name %>/<%= meta.commit %>/'
 					]
 
 		connect:
@@ -142,7 +148,7 @@ module.exports = (grunt) ->
 		require("remote")()
 
 	grunt.registerTask "dev", ["clean", "copy:main", "coffee", "less"]
-	grunt.registerTask "prod", ["dev", "useminPrepare", "concat", "uglify", "cssmin", "usemin"]
+	grunt.registerTask "prod", ["dev", "copy:debug", "useminPrepare", "concat", "uglify", "cssmin", "usemin"]
 	grunt.registerTask "default", ["dev", "livereload-start", "connect", "regarde:dev"]
 	grunt.registerTask "devmin", ["prod", "livereload-start", "connect", "regarde:prod"]
 	grunt.registerTask "test", ["dev", "simplemocha"]

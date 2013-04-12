@@ -17,6 +17,12 @@ The compiled files can be found in the `/build` folder.
 
     grunt prod
 
+### Deployment build
+
+    grunt env:master deploy
+
+Give a look at the newly created deploy/master/index.html file.
+
 ### Folder structure
 
 - `src` - most of your files will be here.
@@ -28,7 +34,10 @@ The compiled files can be found in the `/build` folder.
 - `Gruntfile.json` - This is the configuration file for grunt. Contains all the build tasks.
 - `remote.json` - The configuration file for [Remote](https://github.com/gadr90/remote), if you need it.
 - `build` - this folder will be created after you run a grunt task.
-	-	`index.debug.html` - this is the same index as generated on the dev task. Useful for debugging in production.
+	-   `index.debug.html` - this is the same index as generated on the dev task. Useful for debugging in production.
+- `deploy` - this folder contains a deploy-ready, commit-hash-versioned folder of your app
+    -   `<git-commit-hash>` - the name of this folder is the hash of your current commit
+    -   `<env>` - this folder contains only the necessary files for referencing your app - in this case, the index is enough
 
 ------
 
