@@ -60,7 +60,7 @@ On the compiled index.html **for `prod` builds**.
 ### Common issues:
 
 **EADDRINUSE** - Someone is already using one of the ports used by this app, either [connect](https://github.com/gruntjs/grunt-contrib-connect)'s 9001 or [LiveReload](https://github.com/gruntjs/grunt-contrib-livereload)'s 35729.
-Shut down interfering services or change the ports on Gruntfile.js.
+Shut down interfering services or change the ports on Gruntfile.coffee.
 
 ------
 
