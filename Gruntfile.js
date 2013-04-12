@@ -148,7 +148,7 @@ module.exports = function (grunt) {
 				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less', 'test/**/*.coffee'],
 				tasks: ['test'],
 				spawn: true
-			},
+			}
 		},
 		simplemocha: {
 			options: {
