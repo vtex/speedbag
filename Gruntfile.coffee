@@ -8,6 +8,7 @@ folderMount = (connect, point) -> connect.static path.resolve(point)
 module.exports = (grunt) ->
 	# Project configuration.
 	grunt.initConfig
+		pkg: grunt.file.readJSON('package.json')
 		clean: ["build", "deploy"]
 		copy:
 			main:
@@ -22,11 +23,11 @@ module.exports = (grunt) ->
 				src: ["**", "!includes/**", "!coffee/**", "!**/*.less"]
 				dest: "deploy/<%= meta.commit %>/"
 
-			tag:
+			env:
 				expand: true
 				cwd: "deploy/<%= meta.commit %>/"
 				src: ["index.html"]
-				dest: "deploy/<%= meta.tag %>/"
+				dest: "deploy/<%= meta.env %>/"
 
 		coffee:
 			main:
@@ -57,15 +58,15 @@ module.exports = (grunt) ->
 		'string-replace':
 			deploy:
 				files:
-					"deploy/<%= meta.tag %>/index.html": ["deploy/<%= meta.tag %>/index.html"]
+					"deploy/<%= meta.env %>/index.html": ["deploy/<%= meta.env %>/index.html"]
 
 				options:
 					replacements: [
 						pattern: /src="/ig
-						replacement: 'src="$resourcesUrl$/<%= meta.commit %>/'
+						replacement: 'src="$resourcesUrl$/<%= pkg.name %>/<%= meta.commit %>/'
 					,
 						pattern: /href="/ig
-						replacement: 'href="$resourcesUrl$/<%= meta.commit %>/'
+						replacement: 'href="$resourcesUrl$/<%= pkg.name %>/<%= meta.commit %>/'
 					]
 
 		connect:
@@ -99,10 +100,10 @@ module.exports = (grunt) ->
 			all:
 				src: "build/test/js/**/*.js"
 
-	grunt.registerTask "tag", ->
-		tag = this.args[0]
-		console.log "Setting tag to:", tag
-		grunt.config "meta.tag", tag
+	grunt.registerTask "env", ->
+		env = this.args[0]
+		console.log "Setting env to:", env
+		grunt.config "meta.env", env
 
 	grunt.registerTask "deploy-version", ->
 		if process.env.GIT_COMMIT
@@ -146,10 +147,8 @@ module.exports = (grunt) ->
 	grunt.registerTask "devmin", ["prod", "livereload-start", "connect", "regarde:prod"]
 	grunt.registerTask "test", ["dev", "simplemocha"]
 	grunt.registerTask "devtest", ["test", "regarde:test"]
-	# Ran before tag task
-	grunt.registerTask "deploy", ["prod", "deploy-version", "copy:deploy"]
-	# Ran after tag task
-	grunt.registerTask "deploy-tag", ["copy:tag", "string-replace:deploy"]
+	# Ran after env task
+	grunt.registerTask "deploy", ["prod", "deploy-version", "copy:deploy", "copy:env", "string-replace:deploy"]
 
-	# Example usage of tag task
-	grunt.registerTask "deploy-master", ["deploy", "tag:master", "deploy-tag"]
+	# Example usage of env task
+	grunt.registerTask "deploy-master", ["env:master", "deploy"]
