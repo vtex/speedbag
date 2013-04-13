@@ -106,11 +106,6 @@ module.exports = (grunt) ->
 			all:
 				src: "build/test/js/**/*.js"
 
-	grunt.registerTask "env", ->
-		env = this.args[0]
-		console.log "Setting env to:", env
-		grunt.config "meta.env", env
-
 	grunt.registerTask "deploy-version", ->
 		if process.env.GIT_COMMIT
 			grunt.config "meta.commit", new String(process.env.GIT_COMMIT)
@@ -153,8 +148,11 @@ module.exports = (grunt) ->
 	grunt.registerTask "devmin", ["prod", "livereload-start", "connect", "regarde:prod"]
 	grunt.registerTask "test", ["dev", "simplemocha"]
 	grunt.registerTask "devtest", ["test", "regarde:test"]
-	# Ran after env task
-	grunt.registerTask "deploy", ["prod", "deploy-version", "copy:deploy", "copy:env", "string-replace:deploy"]
+	grunt.registerTask "deploy", ->
+		env = this.args[0]
+		console.log "Deploying to environment:", env
+		grunt.config "meta.env", env
+		grunt.task.run ["prod", "simplemocha", "deploy-version", "copy:deploy", "copy:env", "string-replace:deploy"]
 
-	# Example usage of env task
-	grunt.registerTask "deploy-master", ["env:master", "deploy"]
+	# Example usage of deploy task
+	grunt.registerTask "deploy-example", ["deploy:master"]

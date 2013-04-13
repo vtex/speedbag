@@ -19,7 +19,7 @@ The compiled files can be found in the `/build` folder.
 
 ### Deployment build
 
-    grunt env:master deploy
+    grunt deploy:master
 
 Have a look at the newly created deploy/master/index.html file.
 
