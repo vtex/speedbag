@@ -1,8 +1,8 @@
-path = require("path")
+path = require('path')
 exec = require('child_process').exec
-cheerio = require("cheerio")
-chai = require("chai")
-lrSnippet = require("grunt-contrib-livereload/lib/utils").livereloadSnippet
+cheerio = require('cheerio')
+chai = require('chai')
+lrSnippet = require('grunt-contrib-livereload/lib/utils').livereloadSnippet
 folderMount = (connect, point) -> connect.static path.resolve(point)
 
 module.exports = (grunt) ->
@@ -10,68 +10,68 @@ module.exports = (grunt) ->
 	grunt.initConfig
 		resourceToken: '$resourcesUrl$'
 		pkg: grunt.file.readJSON('package.json')
-		clean: ["build", "deploy"]
+		clean: ['build', 'deploy']
 		copy:
 			main:
 				expand: true
-				cwd: "src/"
-				src: ["**", "!includes/**", "!coffee/**", "!**/*.less"]
-				dest: "build/"
+				cwd: 'src/'
+				src: ['**', '!includes/**', '!coffee/**', '!**/*.less']
+				dest: 'build/'
 
 			debug:
-				src: ["src/index.html"]
-				dest: "build/index.debug.html"
+				src: ['src/index.html']
+				dest: 'build/index.debug.html'
 
 			deploy:
 				expand: true
-				cwd: "build/"
-				src: ["**", "!includes/**", "!coffee/**", "!**/*.less"]
-				dest: "deploy/<%= meta.commit %>/"
+				cwd: 'build/'
+				src: ['**', '!includes/**', '!coffee/**', '!**/*.less']
+				dest: 'deploy/<%= meta.commit %>/'
 
 			env:
 				expand: true
-				cwd: "deploy/<%= meta.commit %>/"
-				src: ["index.html", "index.debug.html"]
-				dest: "deploy/<%= meta.env %>/"
+				cwd: 'deploy/<%= meta.commit %>/'
+				src: ['index.html', 'index.debug.html']
+				dest: 'deploy/<%= meta.env %>/'
 
 		coffee:
 			main:
 				expand: true
-				cwd: "src/coffee"
-				src: ["**/*.coffee"]
-				dest: "build/js/"
-				ext: ".js"
+				cwd: 'src/coffee'
+				src: ['**/*.coffee']
+				dest: 'build/js/'
+				ext: '.js'
 
 			test:
 				expand: true
-				cwd: "test/coffee"
-				src: ["**/*.coffee"]
-				dest: "build/test/js/"
-				ext: ".js"
+				cwd: 'test/coffee'
+				src: ['**/*.coffee']
+				dest: 'build/test/js/'
+				ext: '.js'
 
 		less:
 			main:
 				files:
-					"build/style/main.css": "src/style/main.less"
+					'build/style/main.css': 'src/style/main.less'
 
 		useminPrepare:
-			html: "build/index.html"
+			html: 'build/index.html'
 
 		usemin:
-			html: "build/index.html"
+			html: 'build/index.html'
 
 		'string-replace':
 			deploy:
 				files:
-					"deploy/<%= meta.env %>/index.html": ["deploy/<%= meta.env %>/index.html"]
-					"deploy/<%= meta.env %>/index.debug.html": ["deploy/<%= meta.env %>/index.debug.html"]
+					'deploy/<%= meta.env %>/index.html': ['deploy/<%= meta.env %>/index.html']
+					'deploy/<%= meta.env %>/index.debug.html': ['deploy/<%= meta.env %>/index.debug.html']
 
 				options:
 					replacements: [
-						pattern: /src="/ig
+						pattern: /src='/ig
 						replacement: 'src="<%= resourceToken %>/<%= pkg.name %>/<%= meta.commit %>/'
 					,
-						pattern: /href="/ig
+						pattern: /href='/ig
 						replacement: 'href="<%= resourceToken %>/<%= pkg.name %>/<%= meta.commit %>/'
 					]
 
@@ -80,79 +80,87 @@ module.exports = (grunt) ->
 				options:
 					port: 9001
 					middleware: (connect, options) ->
-						[lrSnippet, folderMount(connect, "build/")]
+						[lrSnippet, folderMount(connect, 'build/')]
 
 		regarde:
 			dev:
-				files: ["src/**/*.html", "src/**/*.coffee", "src/**/*.js", "src/**/*.less"]
-				tasks: ["dev", "livereload"]
+				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less']
+				tasks: ['dev', 'livereload']
 
 			prod:
-				files: ["src/**/*.html", "src/**/*.coffee", "src/**/*.js", "src/**/*.less"]
-				tasks: ["prod", "livereload"]
+				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less']
+				tasks: ['prod', 'livereload']
 
 			test:
-				files: ["src/**/*.html", "src/**/*.coffee", "src/**/*.js", "src/**/*.less", "test/**/*.coffee"]
-				tasks: ["test"]
+				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less', 'test/**/*.coffee']
+				tasks: ['test']
 				spawn: true
 
 		simplemocha:
 			options:
 				timeout: 3000
 				ignoreLeaks: false
-				ui: "bdd"
-				reporter: "spec"
+				ui: 'bdd'
+				reporter: 'spec'
 
 			all:
-				src: "build/test/js/**/*.js"
+				src: 'build/test/js/**/*.js'
 
-	grunt.registerTask "deploy-version", ->
+	# Looks for the commit hash in a GIT_COMMIT env var, or tries calling git.
+	grunt.registerTask 'deploy-version', ->
 		if process.env.GIT_COMMIT
-			grunt.config "meta.commit", new String(process.env.GIT_COMMIT)
-			grunt.log.writeln "Version set by environment variable GIT_COMMIT to: " + grunt.config("meta.commit")
+			grunt.config 'meta.commit', new String(process.env.GIT_COMMIT)
+			grunt.log.writeln 'Version set by environment variable GIT_COMMIT to: ' + grunt.config('meta.commit')
 		else
 			done = @async()
-			exec "git rev-parse --verify HEAD", (err, stdout, stderr) ->
+			exec 'git rev-parse --verify HEAD', (err, stdout, stderr) ->
 				if err
-					grunt.log.writeln "Failed to set version by git."
+					grunt.log.writeln 'Failed to set version by git.'
 					done()
 					return
-				grunt.config "meta.commit", stdout.replace("\n", "")
-				grunt.log.writeln "Version set by git commit to: " + grunt.config("meta.commit")
+				grunt.config 'meta.commit', stdout.replace('\n', '')
+				grunt.log.writeln 'Version set by git commit to: ' + grunt.config('meta.commit')
 				done()
 
-	grunt.loadNpmTasks "grunt-contrib-connect"
-	grunt.loadNpmTasks "grunt-contrib-concat"
-	grunt.loadNpmTasks "grunt-contrib-livereload"
-	grunt.loadNpmTasks "grunt-contrib-copy"
-	grunt.loadNpmTasks "grunt-contrib-clean"
-	grunt.loadNpmTasks "grunt-contrib-coffee"
-	grunt.loadNpmTasks "grunt-contrib-less"
-	grunt.loadNpmTasks "grunt-contrib-uglify"
-	grunt.loadNpmTasks "grunt-contrib-cssmin"
-	grunt.loadNpmTasks "grunt-regarde"
-	grunt.loadNpmTasks "grunt-simple-mocha"
-	grunt.loadNpmTasks "grunt-usemin"
-	grunt.loadNpmTasks "grunt-string-replace"
+	grunt.loadNpmTasks 'grunt-contrib-connect'
+	grunt.loadNpmTasks 'grunt-contrib-concat'
+	grunt.loadNpmTasks 'grunt-contrib-livereload'
+	grunt.loadNpmTasks 'grunt-contrib-copy'
+	grunt.loadNpmTasks 'grunt-contrib-clean'
+	grunt.loadNpmTasks 'grunt-contrib-coffee'
+	grunt.loadNpmTasks 'grunt-contrib-less'
+	grunt.loadNpmTasks 'grunt-contrib-uglify'
+	grunt.loadNpmTasks 'grunt-contrib-cssmin'
+	grunt.loadNpmTasks 'grunt-regarde'
+	grunt.loadNpmTasks 'grunt-simple-mocha'
+	grunt.loadNpmTasks 'grunt-usemin'
+	grunt.loadNpmTasks 'grunt-string-replace'
 
-	###
-	Remote tasks
-	###
-	grunt.registerTask "remote", "Run Remote proxy server", ->
-		require "coffee-script"
-		require("remote")()
+	grunt.registerTask 'default', ['dev-watch']
 
-	grunt.registerTask "dev", ["clean", "copy:main", "coffee", "less"]
-	grunt.registerTask "prod", ["dev", "copy:debug", "useminPrepare", "concat", "uglify", "cssmin", "usemin"]
-	grunt.registerTask "default", ["dev", "livereload-start", "connect", "regarde:dev"]
-	grunt.registerTask "devmin", ["prod", "livereload-start", "connect", "regarde:prod"]
-	grunt.registerTask "test", ["dev", "simplemocha"]
-	grunt.registerTask "devtest", ["test", "regarde:test"]
-	grunt.registerTask "deploy", ->
+	# Dev
+	grunt.registerTask 'dev', ['clean', 'copy:main', 'coffee', 'less']
+	grunt.registerTask 'dev-watch', ['dev', 'livereload-start', 'connect', 'regarde:dev']
+
+	# Prod - minifies files
+	grunt.registerTask 'prod', ['dev', 'copy:debug', 'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin']
+	grunt.registerTask 'prod-watch', ['prod', 'livereload-start', 'connect', 'regarde:prod']
+
+	# Test
+	grunt.registerTask 'test', ['dev', 'simplemocha']
+	grunt.registerTask 'test-watch', ['test', 'regarde:test']
+
+	# Deploy - creates deploy folder structure
+	grunt.registerTask 'deploy', ->
 		env = this.args[0]
-		console.log "Deploying to environment:", env
-		grunt.config "meta.env", env
-		grunt.task.run ["prod", "simplemocha", "deploy-version", "copy:deploy", "copy:env", "string-replace:deploy"]
+		console.log 'Deploying to environment:', env
+		grunt.config 'meta.env', env
+		grunt.task.run ['prod', 'simplemocha', 'deploy-version', 'copy:deploy', 'copy:env', 'string-replace:deploy']
 
 	# Example usage of deploy task
-	grunt.registerTask "deploy-example", ["deploy:master"]
+	grunt.registerTask 'deploy-example', ['deploy:master']
+
+	#	Remote task
+	grunt.registerTask 'remote', 'Run Remote proxy server', ->
+		require 'coffee-script'
+		require('remote')()
