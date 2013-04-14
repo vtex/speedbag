@@ -1,7 +1,5 @@
 path = require('path')
 exec = require('child_process').exec
-cheerio = require('cheerio')
-chai = require('chai')
 lrSnippet = require('grunt-contrib-livereload/lib/utils').livereloadSnippet
 folderMount = (connect, point) -> connect.static path.resolve(point)
 
@@ -44,9 +42,9 @@ module.exports = (grunt) ->
 
 			test:
 				expand: true
-				cwd: 'test/coffee'
+				cwd: 'spec/'
 				src: ['**/*.coffee']
-				dest: 'build/test/js/'
+				dest: 'build/spec/'
 				ext: '.js'
 
 		less:
@@ -59,6 +57,12 @@ module.exports = (grunt) ->
 
 		usemin:
 			html: 'build/index.html'
+
+		jasmine:
+			test:
+				src: ['build/lib/zepto/zepto.js', 'build/js/**/*.js']
+				options:
+					specs: 'build/spec/*Spec.js'
 
 		'string-replace':
 			deploy:
@@ -92,19 +96,9 @@ module.exports = (grunt) ->
 				tasks: ['prod', 'livereload']
 
 			test:
-				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less', 'test/**/*.coffee']
+				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less', 'spec/**/*.coffee']
 				tasks: ['test']
 				spawn: true
-
-		simplemocha:
-			options:
-				timeout: 3000
-				ignoreLeaks: false
-				ui: 'bdd'
-				reporter: 'spec'
-
-			all:
-				src: 'build/test/js/**/*.js'
 
 	# Looks for the commit hash in a GIT_COMMIT env var, or tries calling git.
 	grunt.registerTask 'deploy-version', ->
@@ -131,8 +125,8 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks 'grunt-contrib-less'
 	grunt.loadNpmTasks 'grunt-contrib-uglify'
 	grunt.loadNpmTasks 'grunt-contrib-cssmin'
+	grunt.loadNpmTasks 'grunt-contrib-jasmine'
 	grunt.loadNpmTasks 'grunt-regarde'
-	grunt.loadNpmTasks 'grunt-simple-mocha'
 	grunt.loadNpmTasks 'grunt-usemin'
 	grunt.loadNpmTasks 'grunt-string-replace'
 
@@ -147,7 +141,7 @@ module.exports = (grunt) ->
 	grunt.registerTask 'prod-watch', ['prod', 'livereload-start', 'connect', 'regarde:prod']
 
 	# Test
-	grunt.registerTask 'test', ['dev', 'simplemocha']
+	grunt.registerTask 'test', ['dev', 'jasmine']
 	grunt.registerTask 'test-watch', ['test', 'regarde:test']
 
 	# Deploy - creates deploy folder structure
@@ -155,7 +149,7 @@ module.exports = (grunt) ->
 		env = this.args[0]
 		console.log 'Deploying to environment:', env
 		grunt.config 'meta.env', env
-		grunt.task.run ['prod', 'simplemocha', 'deploy-version', 'copy:deploy', 'copy:env', 'string-replace:deploy']
+		grunt.task.run ['prod', 'jasmine', 'deploy-version', 'copy:deploy', 'copy:env', 'string-replace:deploy']
 
 	# Example usage of deploy task
 	grunt.registerTask 'deploy-example', ['deploy:master']
