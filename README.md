@@ -33,7 +33,7 @@ Have a look at the newly created deploy/master/index.html file.
 	- `lib` - Third-party libs
 	- `index.html` - Your app entry point.
 - `test` - Unit tests source files.
-- `Gruntfile.json` - This is the configuration file for grunt. Contains all the build tasks.
+- `Gruntfile.coffee` - This is the configuration file for grunt. Contains all the build tasks.
 - `remote.json` - The configuration file for [Remote](https://github.com/gadr90/remote), if you need it.
 - `build` - this folder will be created after you run a grunt task.
 	-   `index.debug.html` - this is the same index as generated on the dev task. Useful for debugging in production.
