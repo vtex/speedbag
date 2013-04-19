@@ -72,10 +72,10 @@ module.exports = (grunt) ->
 
 				options:
 					replacements: [
-						pattern: /src="/ig
+						pattern: /src="(\.\.\/)?(?!http|\/|\/\/)/ig
 						replacement: 'src="<%= resourceToken %>/<%= pkg.name %>/<%= meta.commit %>/'
 					,
-						pattern: /href="/ig
+						pattern: /href="(\.\.\/)?(?!http|\/|\/\/)/ig
 						replacement: 'href="<%= resourceToken %>/<%= pkg.name %>/<%= meta.commit %>/'
 					]
 
