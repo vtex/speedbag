@@ -100,6 +100,11 @@ module.exports = (grunt) ->
 				tasks: ['test']
 				spawn: true
 
+	grunt.registerTask 'set-env', ->
+		env = this.args[0]
+		console.log 'Deploying to environment:', env
+		grunt.config 'meta.env', env
+
 	grunt.registerTask 'token', ->
 		if process.env.RESOURCE_TOKEN
 			console.log 'Resource Token set by environment variable.'
@@ -152,10 +157,8 @@ module.exports = (grunt) ->
 
 	# Deploy - creates deploy folder structure
 	grunt.registerTask 'deploy', ->
-		env = this.args[0]
-		console.log 'Deploying to environment:', env
-		grunt.config 'meta.env', env
-		grunt.task.run ['prod', 'jasmine', 'deploy-version', 'copy:deploy', 'copy:env', 'token', 'string-replace:deploy']
+		env = this.args[0] or 'dev'
+		grunt.task.run ['prod', 'jasmine', 'set-env:' + env, 'deploy-version', 'copy:deploy', 'copy:env', 'token', 'string-replace:deploy']
 
 	# Example usage of deploy task
 	grunt.registerTask 'deploy-example', ['deploy:master']
