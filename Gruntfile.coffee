@@ -6,7 +6,7 @@ folderMount = (connect, point) -> connect.static path.resolve(point)
 module.exports = (grunt) ->
 	# Project configuration.
 	grunt.initConfig
-		resourceToken: '$resourcesUrl$'
+		resourceToken: '$RESOURCE_URL$'
 		pkg: grunt.file.readJSON('package.json')
 		clean: ['build', 'deploy']
 		copy:
@@ -100,6 +100,12 @@ module.exports = (grunt) ->
 				tasks: ['test']
 				spawn: true
 
+	grunt.registerTask 'token', ->
+		if process.env.RESOURCE_TOKEN
+			console.log 'Resource Token set by environment variable.'
+			grunt.config 'resourceToken', process.env.RESOURCE_TOKEN
+		console.log 'Resource Token:', grunt.config('resourceToken')
+
 	# Looks for the commit hash in a GIT_COMMIT env var, or tries calling git.
 	grunt.registerTask 'deploy-version', ->
 		if process.env.GIT_COMMIT
@@ -149,7 +155,7 @@ module.exports = (grunt) ->
 		env = this.args[0]
 		console.log 'Deploying to environment:', env
 		grunt.config 'meta.env', env
-		grunt.task.run ['prod', 'jasmine', 'deploy-version', 'copy:deploy', 'copy:env', 'string-replace:deploy']
+		grunt.task.run ['prod', 'jasmine', 'deploy-version', 'copy:deploy', 'copy:env', 'token', 'string-replace:deploy']
 
 	# Example usage of deploy task
 	grunt.registerTask 'deploy-example', ['deploy:master']
