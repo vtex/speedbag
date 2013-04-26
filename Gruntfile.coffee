@@ -6,7 +6,7 @@ folderMount = (connect, point) -> connect.static path.resolve(point)
 module.exports = (grunt) ->
 	# Project configuration.
 	grunt.initConfig
-		resourceToken: '$RESOURCE_URL$'
+		resourceToken: process.env['RESOURCE_TOKEN'] or 'http://vtex.io'
 		relativePath: ''
 		pkg: grunt.file.readJSON('package.json')
 		clean: ['build', 'deploy']
@@ -29,7 +29,7 @@ module.exports = (grunt) ->
 
 			env:
 				expand: true
-				cwd: 'deploy/<%= meta.commit %>/'
+				cwd: 'build/<%= relativePath %>'
 				src: ['index.html', 'index.debug.html']
 				dest: 'deploy/<%= meta.env %>/'
 
@@ -101,19 +101,8 @@ module.exports = (grunt) ->
 				tasks: ['test']
 				spawn: true
 
-	grunt.registerTask 'set-env', ->
-		env = this.args[0]
-		console.log 'Deploying to environment:', env
-		grunt.config 'meta.env', env
-
-	grunt.registerTask 'token', ->
-		if process.env.RESOURCE_TOKEN
-			console.log 'Resource Token set by environment variable.'
-			grunt.config 'resourceToken', process.env.RESOURCE_TOKEN
-		console.log 'Resource Token:', grunt.config('resourceToken')
-
 	# Looks for the commit hash in a GIT_COMMIT env var, or tries calling git.
-	grunt.registerTask 'deploy-version', ->
+	grunt.registerTask 'set-version', ->
 		if process.env.GIT_COMMIT
 			grunt.config 'meta.commit', new String(process.env.GIT_COMMIT)
 			grunt.log.writeln 'Version set by environment variable GIT_COMMIT to: ' + grunt.config('meta.commit')
@@ -156,11 +145,18 @@ module.exports = (grunt) ->
 	grunt.registerTask 'test', ['dev', 'jasmine']
 	grunt.registerTask 'test-watch', ['test', 'regarde:test']
 
+	# Generates version folder
+	grunt.registerTask 'gen-version', ->
+		env = this.args[0] or 'dev'
+		console.log 'Deploying to environment:', env
+		grunt.config 'meta.env', env
+		grunt.task.run ['set-version', 'copy:env', 'string-replace:deploy']
+	
 	# Deploy - creates deploy folder structure
 	grunt.registerTask 'deploy', ->
 		env = this.args[0] or 'dev'
-		grunt.task.run ['prod', 'jasmine', 'set-env:' + env, 'deploy-version', 'copy:deploy', 'copy:env', 'token', 'string-replace:deploy']
-
+		grunt.task.run ['prod', 'jasmine', 'gen-version:' + env, 'copy:deploy']
+		
 	# Example usage of deploy task
 	grunt.registerTask 'deploy-example', ['deploy:master']
 
