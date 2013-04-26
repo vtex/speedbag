@@ -19,6 +19,7 @@
 		"grunt-string-replace": "~0.2.4",
 		"grunt-regarde": "~0.1.1",
 		"grunt-usemin": "~0.1.10",
+		"coffee-script": "~1.6.2",
 		"remote": "~0.2.2"
 	},
 	"repository": {

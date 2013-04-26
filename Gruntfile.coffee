@@ -7,6 +7,7 @@ module.exports = (grunt) ->
 	# Project configuration.
 	grunt.initConfig
 		resourceToken: '$RESOURCE_URL$'
+		relativePath: ''
 		pkg: grunt.file.readJSON('package.json')
 		clean: ['build', 'deploy']
 		copy:
@@ -14,15 +15,15 @@ module.exports = (grunt) ->
 				expand: true
 				cwd: 'src/'
 				src: ['**', '!includes/**', '!coffee/**', '!**/*.less']
-				dest: 'build/'
+				dest: 'build/<%= relativePath %>'
 
 			debug:
 				src: ['src/index.html']
-				dest: 'build/index.debug.html'
+				dest: 'build/<%= relativePath %>/index.debug.html'
 
 			deploy:
 				expand: true
-				cwd: 'build/'
+				cwd: 'build/<%= relativePath %>/'
 				src: ['**', '!includes/**', '!coffee/**', '!**/*.less']
 				dest: 'deploy/<%= meta.commit %>/'
 
@@ -37,32 +38,32 @@ module.exports = (grunt) ->
 				expand: true
 				cwd: 'src/coffee'
 				src: ['**/*.coffee']
-				dest: 'build/js/'
+				dest: 'build/<%= relativePath %>/js/'
 				ext: '.js'
 
 			test:
 				expand: true
 				cwd: 'spec/'
 				src: ['**/*.coffee']
-				dest: 'build/spec/'
+				dest: 'build/<%= relativePath %>/spec/'
 				ext: '.js'
 
 		less:
 			main:
 				files:
-					'build/style/main.css': 'src/style/main.less'
+					'build/<%= relativePath %>/style/main.css': 'src/style/main.less'
 
 		useminPrepare:
-			html: 'build/index.html'
+			html: 'build/<%= relativePath %>/index.html'
 
 		usemin:
-			html: 'build/index.html'
+			html: 'build/<%= relativePath %>/index.html'
 
 		jasmine:
 			test:
-				src: ['build/lib/zepto/zepto.js', 'build/js/**/*.js']
+				src: ['build/<%= relativePath %>/lib/zepto/zepto.js', 'build/<%= relativePath %>/js/**/*.js']
 				options:
-					specs: 'build/spec/*Spec.js'
+					specs: 'build/<%= relativePath %>/spec/*Spec.js'
 
 		'string-replace':
 			deploy:
