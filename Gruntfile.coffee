@@ -10,7 +10,7 @@ module.exports = (grunt) ->
 		relativePath: ''
 		pkg: grunt.file.readJSON('package.json')
 		pacha: grunt.file.readJSON('tools/pachamama/pachamama.config')[0]
-		clean: ['build', 'deploy']
+		clean: ['build']
 		copy:
 			main:
 				expand: true
