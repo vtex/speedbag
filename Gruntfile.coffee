@@ -1,5 +1,5 @@
 path = require('path')
-exec = require('child_process').exec
+fs = require('fs')
 lrSnippet = require('grunt-contrib-livereload/lib/utils').livereloadSnippet
 folderMount = (connect, point) -> connect.static path.resolve(point)
 
@@ -7,6 +7,7 @@ module.exports = (grunt) ->
 	# Project configuration.
 	grunt.initConfig
 		resourceToken: process.env['RESOURCE_TOKEN'] or 'http://vtex.io'
+		gitCommit: process.env['GIT_COMMIT'] or 'GIT_COMMIT'
 		relativePath: ''
 		pkg: grunt.file.readJSON('package.json')
 		pacha: grunt.file.readJSON('tools/pachamama/pachamama.config')[0]
@@ -26,7 +27,7 @@ module.exports = (grunt) ->
 				expand: true
 				cwd: 'build/<%= relativePath %>/'
 				src: ['**', '!includes/**', '!coffee/**', '!**/*.less']
-				dest: 'deploy/<%= meta.commit %>/'
+				dest: 'deploy/<%= gitCommit %>/'
 
 			env:
 				expand: true
@@ -75,10 +76,10 @@ module.exports = (grunt) ->
 				options:
 					replacements: [
 						pattern: /src="(\.\.\/)?(?!http|\/|\/\/)/ig
-						replacement: 'src="<%= resourceToken %>/<%= pacha.infrastructure.s3.bucket %>/<%= meta.commit %>/'
+						replacement: 'src="<%= resourceToken %>/<%= pacha.infrastructure.s3.bucket %>/<%= gitCommit %>/'
 					,
 						pattern: /href="(\.\.\/)?(?!http|\/|\/\/)/ig
-						replacement: 'href="<%= resourceToken %>/<%= pacha.infrastructure.s3.bucket %>/<%= meta.commit %>/'
+						replacement: 'href="<%= resourceToken %>/<%= pacha.infrastructure.s3.bucket %>/<%= gitCommit %>/'
 					]
 
 		connect:
@@ -101,22 +102,6 @@ module.exports = (grunt) ->
 				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less', 'spec/**/*.coffee']
 				tasks: ['test']
 				spawn: true
-
-	# Looks for the commit hash in a GIT_COMMIT env var, or tries calling git.
-	grunt.registerTask 'set-version', ->
-		if process.env.GIT_COMMIT
-			grunt.config 'meta.commit', new String(process.env.GIT_COMMIT)
-			grunt.log.writeln 'Version set by environment variable GIT_COMMIT to: ' + grunt.config('meta.commit')
-		else
-			done = @async()
-			exec 'git rev-parse --verify HEAD', (err, stdout, stderr) ->
-				if err
-					grunt.log.writeln 'Failed to set version by git.'
-					done()
-					return
-				grunt.config 'meta.commit', stdout.replace('\n', '')
-				grunt.log.writeln 'Version set by git commit to: ' + grunt.config('meta.commit')
-				done()
 
 	grunt.loadNpmTasks 'grunt-contrib-connect'
 	grunt.loadNpmTasks 'grunt-contrib-concat'
@@ -149,16 +134,22 @@ module.exports = (grunt) ->
 	# Generates version folder
 	grunt.registerTask 'gen-version', ->
 		env = this.args[0] or 'dev'
-		console.log 'Deploying to environment:', env
-		console.log 'VTEX IO Directory:', grunt.config('pacha').infrastructure.s3.bucket
+		grunt.log.writeln 'Deploying to environment: ' + env
+		grunt.log.writeln 'VTEX IO Directory: ' + grunt.config('pacha').infrastructure.s3.bucket
+		grunt.log.writeln 'Version set by environment variable GIT_COMMIT to: ' + grunt.config('gitCommit')
 		grunt.config 'meta.env', env
-		grunt.task.run ['set-version', 'copy:env', 'string-replace:deploy']
-	
+		grunt.task.run ['copy:env', 'string-replace:deploy']
+
 	# Deploy - creates deploy folder structure
 	grunt.registerTask 'deploy', ->
 		env = this.args[0] or 'dev'
-		grunt.task.run ['prod', 'jasmine', 'gen-version:' + env, 'copy:deploy']
-		
+		commit = grunt.config('gitCommit')
+		if fs.existsSync 'deploy/' + commit
+			grunt.log.writeln 'Folder '.cyan + commit.green + ' alredy exists. Skipping build process and generating environment folder.'.cyan
+			grunt.task.run ['gen-version:' + env]
+		else
+			grunt.task.run ['prod', 'jasmine', 'gen-version:' + env, 'copy:deploy']
+
 	# Example usage of deploy task
 	grunt.registerTask 'deploy-example', ['deploy:master']
 
