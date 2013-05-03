@@ -9,6 +9,7 @@ module.exports = (grunt) ->
 		resourceToken: process.env['RESOURCE_TOKEN'] or 'http://vtex.io'
 		relativePath: ''
 		pkg: grunt.file.readJSON('package.json')
+		pacha: grunt.file.readJSON('tools/pachamama/pachamama.config')[0]
 		clean: ['build', 'deploy']
 		copy:
 			main:
@@ -74,10 +75,10 @@ module.exports = (grunt) ->
 				options:
 					replacements: [
 						pattern: /src="(\.\.\/)?(?!http|\/|\/\/)/ig
-						replacement: 'src="<%= resourceToken %>/<%= pkg.name %>/<%= meta.commit %>/'
+						replacement: 'src="<%= resourceToken %>/<%= pacha.infrastructure.s3.bucket %>/<%= meta.commit %>/'
 					,
 						pattern: /href="(\.\.\/)?(?!http|\/|\/\/)/ig
-						replacement: 'href="<%= resourceToken %>/<%= pkg.name %>/<%= meta.commit %>/'
+						replacement: 'href="<%= resourceToken %>/<%= pacha.infrastructure.s3.bucket %>/<%= meta.commit %>/'
 					]
 
 		connect:
@@ -149,6 +150,7 @@ module.exports = (grunt) ->
 	grunt.registerTask 'gen-version', ->
 		env = this.args[0] or 'dev'
 		console.log 'Deploying to environment:', env
+		console.log 'VTEX IO Directory:', grunt.config('pacha').infrastructure.s3.bucket
 		grunt.config 'meta.env', env
 		grunt.task.run ['set-version', 'copy:env', 'string-replace:deploy']
 	
