@@ -1,7 +1,5 @@
 path = require('path')
 fs = require('fs')
-lrSnippet = require('grunt-contrib-livereload/lib/utils').livereloadSnippet
-folderMount = (connect, point) -> connect.static path.resolve(point)
 
 module.exports = (grunt) ->
 	# Project configuration.
@@ -82,21 +80,33 @@ module.exports = (grunt) ->
 						replacement: 'href="<%= resourceToken %>/<%= pacha.infrastructure.s3.bucket %>/<%= gitCommit %>/'
 					]
 
+			dev:
+				files:
+					'build/<%= relativePath %>/index.html': ['build/<%= relativePath %>/index.html']
+
+				options:
+					replacements: [
+						pattern: "<!-- LR -->"
+						replacement: '<script src="http://localhost:35729/livereload.js"></script>'
+					]
+
 		connect:
-			livereload:
+			dev:
 				options:
 					port: 9001
-					middleware: (connect, options) ->
-						[lrSnippet, folderMount(connect, 'build/')]
+					base: 'build/'
 
-		regarde:
+		watch:
+			options:
+				livereload: true
+
 			dev:
 				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less']
-				tasks: ['dev', 'livereload']
+				tasks: ['dev']
 
 			prod:
 				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less']
-				tasks: ['prod', 'livereload']
+				tasks: ['prod']
 
 			test:
 				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less', 'spec/**/*.coffee']
@@ -105,7 +115,6 @@ module.exports = (grunt) ->
 
 	grunt.loadNpmTasks 'grunt-contrib-connect'
 	grunt.loadNpmTasks 'grunt-contrib-concat'
-	grunt.loadNpmTasks 'grunt-contrib-livereload'
 	grunt.loadNpmTasks 'grunt-contrib-copy'
 	grunt.loadNpmTasks 'grunt-contrib-clean'
 	grunt.loadNpmTasks 'grunt-contrib-coffee'
@@ -113,23 +122,23 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks 'grunt-contrib-uglify'
 	grunt.loadNpmTasks 'grunt-contrib-cssmin'
 	grunt.loadNpmTasks 'grunt-contrib-jasmine'
-	grunt.loadNpmTasks 'grunt-regarde'
+	grunt.loadNpmTasks 'grunt-contrib-watch'
 	grunt.loadNpmTasks 'grunt-usemin'
 	grunt.loadNpmTasks 'grunt-string-replace'
 
 	grunt.registerTask 'default', ['dev-watch']
 
 	# Dev
-	grunt.registerTask 'dev', ['clean', 'copy:main', 'coffee', 'less']
-	grunt.registerTask 'dev-watch', ['dev', 'livereload-start', 'connect', 'regarde:dev']
+	grunt.registerTask 'dev', ['clean', 'copy:main', 'coffee', 'less', 'string-replace:dev']
+	grunt.registerTask 'dev-watch', ['dev', 'connect', 'watch:dev']
 
 	# Prod - minifies files
-	grunt.registerTask 'prod', ['dev', 'copy:debug', 'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin']
-	grunt.registerTask 'prod-watch', ['prod', 'livereload-start', 'connect', 'regarde:prod']
+	grunt.registerTask 'prod', ['dev', 'copy:debug', 'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin', 'string-replace:dev']
+	grunt.registerTask 'prod-watch', ['prod', 'connect', 'watch:prod']
 
 	# Test
 	grunt.registerTask 'test', ['dev', 'jasmine']
-	grunt.registerTask 'test-watch', ['test', 'regarde:test']
+	grunt.registerTask 'test-watch', ['test', 'watch:test']
 
 	# Generates version folder
 	grunt.registerTask 'gen-version', ->
@@ -145,7 +154,7 @@ module.exports = (grunt) ->
 		env = this.args[0] or 'dev'
 		commit = grunt.config('gitCommit')
 		if fs.existsSync 'deploy/' + commit
-			grunt.log.writeln 'Folder '.cyan + commit.green + ' alredy exists. Skipping build process and generating environment folder.'.cyan
+			grunt.log.writeln 'Folder '.cyan + commit.green + ' already exists. Skipping build process and generating environment folder.'.cyan
 			grunt.task.run ['gen-version:' + env]
 		else
 			grunt.task.run ['prod', 'jasmine', 'gen-version:' + env, 'copy:deploy']
