@@ -74,10 +74,10 @@ module.exports = (grunt) ->
 
 				options:
 					replacements: [
-						pattern: /src="(\.\.\/)?(?!http|\/|\/\/)/ig
+						pattern: /src="(\.\.\/)?(?!http|\/|\/\/|\#)/ig
 						replacement: 'src="<%= resourceToken %>/<%= pacha.infrastructure.s3.ApplicationDirectory %>/<%= gitCommit %>/'
 					,
-						pattern: /href="(\.\.\/)?(?!http|\/|\/\/)/ig
+						pattern: /href="(\.\.\/)?(?!http|\/|\/\/|\#)/ig
 						replacement: 'href="<%= resourceToken %>/<%= pacha.infrastructure.s3.ApplicationDirectory %>/<%= gitCommit %>/'
 					]
 
