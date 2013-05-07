@@ -79,16 +79,9 @@ module.exports = (grunt) ->
 					,
 						pattern: /href="(\.\.\/)?(?!http|\/|\/\/|\#)/ig
 						replacement: 'href="<%= resourceToken %>/<%= pacha.infrastructure.s3.ApplicationDirectory %>/<%= gitCommit %>/'
-					]
-
-			dev:
-				files:
-					'build/<%= relativePath %>/index.html': ['build/<%= relativePath %>/index.html']
-
-				options:
-					replacements: [
-						pattern: "<!-- LR -->"
-						replacement: '<script src="http://localhost:35729/livereload.js"></script>'
+					,
+						pattern: '<script src="http://localhost:35729/livereload.js"></script>'
+						replacement: ''
 					]
 
 		connect:
@@ -130,11 +123,11 @@ module.exports = (grunt) ->
 	grunt.registerTask 'default', ['dev-watch']
 
 	# Dev
-	grunt.registerTask 'dev', ['clean', 'copy:main', 'coffee', 'less', 'string-replace:dev']
+	grunt.registerTask 'dev', ['clean', 'copy:main', 'coffee', 'less']
 	grunt.registerTask 'dev-watch', ['dev', 'connect', 'watch:dev']
 
 	# Prod - minifies files
-	grunt.registerTask 'prod', ['dev', 'copy:debug', 'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin', 'string-replace:dev']
+	grunt.registerTask 'prod', ['dev', 'copy:debug', 'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin']
 	grunt.registerTask 'prod-watch', ['prod', 'connect', 'watch:prod']
 
 	# Test
