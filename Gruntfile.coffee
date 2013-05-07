@@ -144,12 +144,12 @@ module.exports = (grunt) ->
 	# Generates version folder
 	grunt.registerTask 'gen-version', ->
 		env = this.args[0] or 'dev'
-		grunt.log.writeln 'Deploying to environment: ' + env
-		grunt.log.writeln 'VTEX IO Directory: ' + grunt.config('pacha').infrastructure.s3.ApplicationDirectory
-		grunt.log.writeln 'Version set by environment variable GIT_COMMIT to: ' + grunt.config('gitCommit')
-		grunt.log.writeln 'Rersource token set by environment variable RESOURCE_TOKEN to: ' + grunt.config('resourceToken')
-		grunt.log.writeln 'Deploy folder: ' + grunt.config('deployDirectory')
 		grunt.config 'meta.env', env
+		grunt.log.writeln 'Deploying to environment: '.cyan + env.green
+		grunt.log.writeln 'VTEX IO Directory: '.cyan + grunt.config('pacha').infrastructure.s3.ApplicationDirectory.green
+		grunt.log.writeln 'Version set by environment variable GIT_COMMIT to: '.cyan + grunt.config('gitCommit').green
+		grunt.log.writeln 'Rersource token set by environment variable RESOURCE_TOKEN to: '.cyan + grunt.config('resourceToken').green
+		grunt.log.writeln 'Deploy folder: '.cyan + grunt.config('deployDirectory').green
 		grunt.task.run ['copy:env', 'string-replace:deploy']
 
 	# Deploy - creates deploy folder structure
@@ -159,7 +159,13 @@ module.exports = (grunt) ->
 		deployDir = grunt.config('deployDirectory') + '/' + commit
 		grunt.log.writeln 'Version deploy dir set to: '.cyan + deployDir.green
 		if fs.existsSync deployDir
-			grunt.log.writeln 'Folder '.cyan + deployDir.green + ' already exists. Skipping build process and generating environment folder.'.cyan
+			skipFilePath = 'build/skip_version_upload'
+			fd = fs.openSync(skipFilePath, 'w')
+			fs.writeSync(fd, true)
+			fs.closeSync(fd)
+			grunt.log.writeln 'Folder '.cyan + deployDir.green + ' already exists.'.cyan
+			grunt.log.writeln 'Created marker file: '.cyan + 'build/skip_version_upload'.green
+			grunt.log.writeln 'Skipping build process and generating environment folder.'.cyan
 			grunt.task.run ['gen-version:' + env]
 		else
 			grunt.task.run ['prod', 'jasmine', 'gen-version:' + env, 'copy:deploy']
