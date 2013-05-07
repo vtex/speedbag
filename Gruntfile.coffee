@@ -30,7 +30,7 @@ module.exports = (grunt) ->
 
 			env:
 				expand: true
-				cwd: 'build/<%= relativePath %>'
+				cwd: '<%= deployDirectory %>/<%= gitCommit %>/'
 				src: ['index.html', 'index.debug.html']
 				dest: '<%= deployDirectory %>/<%= meta.env %>/'
 
@@ -161,7 +161,7 @@ module.exports = (grunt) ->
 			grunt.log.writeln 'Skipping build process and generating environment folder.'.cyan
 			grunt.task.run ['gen-version:' + env]
 		else
-			grunt.task.run ['prod', 'jasmine', 'gen-version:' + env, 'copy:deploy']
+			grunt.task.run ['prod', 'jasmine', 'copy:deploy', 'gen-version:' + env]
 
 	# Example usage of deploy task
 	grunt.registerTask 'deploy-example', ['deploy:master']
