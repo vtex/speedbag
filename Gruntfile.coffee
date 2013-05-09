@@ -6,7 +6,7 @@ module.exports = (grunt) ->
 	grunt.initConfig
 		resourceToken: process.env['RESOURCE_TOKEN'] or 'http://vtex.io'
 		gitCommit: process.env['GIT_COMMIT'] or 'GIT_COMMIT'
-		deployDirectory: path.normalize(process.env['DEPLOY_DIRECTORY']) or path.resolve('.','deploy')
+		deployDirectory: path.normalize(process.env['DEPLOY_DIRECTORY'] ? 'deploy')
 		relativePath: ''
 		pkg: grunt.file.readJSON('package.json')
 		pacha: grunt.file.readJSON('tools/pachamama/pachamama.config')[0]
