@@ -6,7 +6,7 @@ module.exports = (grunt) ->
 	grunt.initConfig
 		resourceToken: process.env['RESOURCE_TOKEN'] or 'http://vtex.io'
 		gitCommit: process.env['GIT_COMMIT'] or 'GIT_COMMIT'
-		deployDirectory: process.env['DEPLOY_DIRECTORY'] or 'deploy'
+		deployDirectory: path.normalize(process.env['DEPLOY_DIRECTORY']) or path.resolve('.','deploy')
 		relativePath: ''
 		pkg: grunt.file.readJSON('package.json')
 		pacha: grunt.file.readJSON('tools/pachamama/pachamama.config')[0]
@@ -147,21 +147,34 @@ module.exports = (grunt) ->
 
 	# Deploy - creates deploy folder structure
 	grunt.registerTask 'deploy', ->
+		console.log 'Entering deploy task...'
 		env = this.args[0] or 'dev'
 		commit = grunt.config('gitCommit')
-		deployDir = grunt.config('deployDirectory') + '/' + commit
+		console.log 'Commit set to', commit
+		deployDir = path.resolve grunt.config('deployDirectory'), commit
+		deployExists = false
+		console.log 'Deploy dir set to', deployDir
 		grunt.log.writeln 'Version deploy dir set to: '.cyan + deployDir.green
-		if fs.existsSync deployDir
-			skipFilePath = 'build/skip_version_upload'
-			fd = fs.openSync(skipFilePath, 'w')
-			fs.writeSync(fd, true)
-			fs.closeSync(fd)
+		try
+			deployExists = fs.existsSync deployDir
+		catch e
+			grunt.log.writeln 'Error reading deploy folder'.red
+			console.log e
+
+		if deployExists
+			console.log 'Deploy dir exists'
+			skipFilePath = path.resolve '.', 'build/skip_version_upload'
+			try
+				fs.writeFileSync skipFilePath, 'true'
+			catch e
+				grunt.log.writeln 'Error creating marker file'.red
+				console.log e
 			grunt.log.writeln 'Folder '.cyan + deployDir.green + ' already exists.'.cyan
 			grunt.log.writeln 'Created marker file: '.cyan + 'build/skip_version_upload'.green
 			grunt.log.writeln 'Skipping build process and generating environment folder.'.cyan
 			grunt.task.run ['gen-version:' + env]
 		else
-			grunt.task.run ['prod', 'jasmine', 'copy:deploy', 'gen-version:' + env]
+			grunt.task.run ['prod', 'copy:deploy', 'gen-version:' + env]
 
 	# Example usage of deploy task
 	grunt.registerTask 'deploy-example', ['deploy:master']
