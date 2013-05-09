@@ -147,13 +147,10 @@ module.exports = (grunt) ->
 
 	# Deploy - creates deploy folder structure
 	grunt.registerTask 'deploy', ->
-		console.log 'Entering deploy task...'
 		env = this.args[0] or 'dev'
 		commit = grunt.config('gitCommit')
-		console.log 'Commit set to', commit
 		deployDir = path.resolve grunt.config('deployDirectory'), commit
 		deployExists = false
-		console.log 'Deploy dir set to', deployDir
 		grunt.log.writeln 'Version deploy dir set to: '.cyan + deployDir.green
 		try
 			deployExists = fs.existsSync deployDir
@@ -162,17 +159,9 @@ module.exports = (grunt) ->
 			console.log e
 
 		if deployExists
-			console.log 'Deploy dir exists'
-			skipFilePath = path.resolve '.', 'build/skip_version_upload'
-			try
-				fs.writeFileSync skipFilePath, 'true'
-			catch e
-				grunt.log.writeln 'Error creating marker file'.red
-				console.log e
 			grunt.log.writeln 'Folder '.cyan + deployDir.green + ' already exists.'.cyan
-			grunt.log.writeln 'Created marker file: '.cyan + 'build/skip_version_upload'.green
 			grunt.log.writeln 'Skipping build process and generating environment folder.'.cyan
-			grunt.task.run ['gen-version:' + env]
+			grunt.task.run ['clean', 'gen-version:' + env]
 		else
 			grunt.task.run ['prod', 'copy:deploy', 'gen-version:' + env]
 
