@@ -4,6 +4,7 @@ fs = require('fs')
 module.exports = (grunt) ->
 	# Project configuration.
 	grunt.initConfig
+		environment: 'dev'
 		resourceToken: process.env['RESOURCE_TOKEN'] or 'http://vtex.io'
 		gitCommit: process.env['GIT_COMMIT'] or 'GIT_COMMIT'
 		deployDirectory: path.normalize(process.env['DEPLOY_DIRECTORY'] ? 'deploy')
@@ -32,7 +33,7 @@ module.exports = (grunt) ->
 				expand: true
 				cwd: '<%= deployDirectory %>/<%= gitCommit %>/'
 				src: ['index.html', 'index.debug.html']
-				dest: '<%= deployDirectory %>/<%= meta.env %>/'
+				dest: '<%= deployDirectory %>/<%= environment %>/'
 
 		coffee:
 			main:
@@ -69,8 +70,8 @@ module.exports = (grunt) ->
 		'string-replace':
 			deploy:
 				files:
-					'<%= deployDirectory %>/<%= meta.env %>/index.html': ['<%= deployDirectory %>/<%= meta.env %>/index.html']
-					'<%= deployDirectory %>/<%= meta.env %>/index.debug.html': ['<%= deployDirectory %>/<%= meta.env %>/index.debug.html']
+					'<%= deployDirectory %>/<%= environment %>/index.html': ['<%= deployDirectory %>/<%= environment %>/index.html']
+					'<%= deployDirectory %>/<%= environment %>/index.debug.html': ['<%= deployDirectory %>/<%= environment %>/index.debug.html']
 
 				options:
 					replacements: [
@@ -137,7 +138,7 @@ module.exports = (grunt) ->
 	# Generates version folder
 	grunt.registerTask 'gen-version', ->
 		env = this.args[0] or 'dev'
-		grunt.config 'meta.env', env
+		grunt.config 'environment', env
 		grunt.log.writeln 'Deploying to environment: '.cyan + env.green
 		grunt.log.writeln 'VTEX IO Directory: '.cyan + grunt.config('pacha').infrastructure.s3.ApplicationDirectory.green
 		grunt.log.writeln 'Version set by environment variable GIT_COMMIT to: '.cyan + grunt.config('gitCommit').green
