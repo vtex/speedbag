@@ -41,6 +41,10 @@ Have a look at the newly created deploy/master/index.html file.
     -   `<git-commit-hash>` - the name of this folder is the hash of your current commit
     -   `<env>` - this folder contains only the necessary files for referencing your app - in this case, the index is enough
 
+### A Thousand Words
+
+![Structure](speedbag.png)
+
 ------
 
 ### Common issues:
