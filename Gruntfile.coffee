@@ -125,11 +125,11 @@ module.exports = (grunt) ->
 
 	# Dev
 	grunt.registerTask 'dev', ['clean', 'copy:main', 'coffee', 'less']
-	grunt.registerTask 'dev-watch', ['dev', 'connect', 'watch:dev']
+	grunt.registerTask 'dev-watch', ['dev', 'connect', 'remote', 'watch:dev']
 
 	# Prod - minifies files
 	grunt.registerTask 'prod', ['dev', 'copy:debug', 'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin']
-	grunt.registerTask 'prod-watch', ['prod', 'connect', 'watch:prod']
+	grunt.registerTask 'prod-watch', ['prod', 'connect', 'remote', 'watch:prod']
 
 	# Test
 	grunt.registerTask 'test', ['dev', 'jasmine']

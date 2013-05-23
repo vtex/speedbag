@@ -1,6 +1,6 @@
 {
 	"remote": {
-		"host": "google.com",
+		"host": "dontpad.com",
 		"port": 80
 	},
 	"proxy": {
@@ -17,10 +17,11 @@
 		"lib/.*",
 		"js/.*",
 		"style/.*",
-		"/",
+		"/$",
 		"index.html"
 	],
 	"mapping": false,
 	"mappings": {
+		"lalala":"http://dontpad.com"
 	}
 }
