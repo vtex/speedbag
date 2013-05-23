@@ -2,15 +2,17 @@ path = require('path')
 fs = require('fs')
 
 module.exports = (grunt) ->
+	pacha = grunt.file.readJSON('tools/pachamama/pachamama.config')[0]
 	# Project configuration.
 	grunt.initConfig
-		environment: 'dev'
-		resourceToken: process.env['RESOURCE_TOKEN'] or 'http://vtex.io'
+		environment: process.env['DEPLOY_ENV'] or 'stable'
+		resourceToken: process.env['RESOURCE_TOKEN'] or '/io'
 		gitCommit: process.env['GIT_COMMIT'] or 'GIT_COMMIT'
 		deployDirectory: path.normalize(process.env['DEPLOY_DIRECTORY'] ? 'deploy')
 		relativePath: ''
 		pkg: grunt.file.readJSON('package.json')
-		pacha: grunt.file.readJSON('tools/pachamama/pachamama.config')[0]
+		pacha: pacha
+		projectName: pacha.application
 		clean: ['build']
 		copy:
 			main:
@@ -32,8 +34,8 @@ module.exports = (grunt) ->
 			env:
 				expand: true
 				cwd: '<%= deployDirectory %>/<%= gitCommit %>/'
-				src: ['index.html', 'index.debug.html']
-				dest: '<%= deployDirectory %>/<%= environment %>/'
+				src: ['**/*.*']
+				dest: '<%= deployDirectory %>/versions/<%= environment %>/'
 
 		coffee:
 			main:
@@ -70,16 +72,16 @@ module.exports = (grunt) ->
 		'string-replace':
 			deploy:
 				files:
-					'<%= deployDirectory %>/<%= environment %>/index.html': ['<%= deployDirectory %>/<%= environment %>/index.html']
-					'<%= deployDirectory %>/<%= environment %>/index.debug.html': ['<%= deployDirectory %>/<%= environment %>/index.debug.html']
+					'<%= deployDirectory %>/versions/<%= environment %>/index.html': ['<%= deployDirectory %>/versions/<%= environment %>/index.html']
+					'<%= deployDirectory %>/versions/<%= environment %>/index.debug.html': ['<%= deployDirectory %>/versions/<%= environment %>/index.debug.html']
 
 				options:
 					replacements: [
 						pattern: /src="(\.\.\/)?(?!http|\/|\/\/|\#)/ig
-						replacement: 'src="<%= resourceToken %>/<%= pacha.infrastructure.s3.ApplicationDirectory %>/<%= gitCommit %>/'
+						replacement: 'src="<%= resourceToken %>/<%= projectName %>/'
 					,
 						pattern: /href="(\.\.\/)?(?!http|\/|\/\/|\#)/ig
-						replacement: 'href="<%= resourceToken %>/<%= pacha.infrastructure.s3.ApplicationDirectory %>/<%= gitCommit %>/'
+						replacement: 'href="<%= resourceToken %>/<%= projectName %>/'
 					,
 						pattern: '<script src="http://localhost:35729/livereload.js"></script>'
 						replacement: ''
@@ -137,18 +139,14 @@ module.exports = (grunt) ->
 
 	# Generates version folder
 	grunt.registerTask 'gen-version', ->
-		env = this.args[0] or 'dev'
-		grunt.config 'environment', env
-		grunt.log.writeln 'Deploying to environment: '.cyan + env.green
-		grunt.log.writeln 'VTEX IO Directory: '.cyan + grunt.config('pacha').infrastructure.s3.ApplicationDirectory.green
-		grunt.log.writeln 'Version set by environment variable GIT_COMMIT to: '.cyan + grunt.config('gitCommit').green
-		grunt.log.writeln 'Rersource token set by environment variable RESOURCE_TOKEN to: '.cyan + grunt.config('resourceToken').green
+		grunt.log.writeln 'Deploying to environment: '.cyan + grunt.config('environment').green
+		grunt.log.writeln 'Version set to: '.cyan + grunt.config('gitCommit').green
+		grunt.log.writeln 'Rersource token set to: '.cyan + grunt.config('resourceToken').green
 		grunt.log.writeln 'Deploy folder: '.cyan + grunt.config('deployDirectory').green
 		grunt.task.run ['copy:env', 'string-replace:deploy']
 
 	# Deploy - creates deploy folder structure
 	grunt.registerTask 'deploy', ->
-		env = this.args[0] or 'dev'
 		commit = grunt.config('gitCommit')
 		deployDir = path.resolve grunt.config('deployDirectory'), commit
 		deployExists = false
@@ -162,12 +160,9 @@ module.exports = (grunt) ->
 		if deployExists
 			grunt.log.writeln 'Folder '.cyan + deployDir.green + ' already exists.'.cyan
 			grunt.log.writeln 'Skipping build process and generating environment folder.'.cyan
-			grunt.task.run ['clean', 'gen-version:' + env]
+			grunt.task.run ['clean', 'gen-version']
 		else
-			grunt.task.run ['prod', 'copy:deploy', 'gen-version:' + env]
-
-	# Example usage of deploy task
-	grunt.registerTask 'deploy-example', ['deploy:master']
+			grunt.task.run ['prod', 'copy:deploy', 'gen-version']
 
 	#	Remote task
 	grunt.registerTask 'remote', 'Run Remote proxy server', ->

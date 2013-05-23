@@ -21,7 +21,7 @@ The compiled files can be found in the `/build` folder.
 
 ### Deployment build
 
-    grunt deploy:master
+    DEPLOY_ENV=beta GIT_COMMIT=`git rev-parse --verify HEAD` grunt deploy
 
 Have a look at the newly created deploy/master/index.html file.
 
@@ -32,18 +32,14 @@ Have a look at the newly created deploy/master/index.html file.
 	- `style` - CSS and LESS source files
 	- `lib` - Third-party libs
 	- `index.html` - Your app entry point.
-- `test` - Unit tests source files.
+- `spec` - Unit tests source files.
 - `Gruntfile.coffee` - This is the configuration file for grunt. Contains all the build tasks.
 - `remote.json` - The configuration file for [Remote](https://github.com/gadr90/remote), if you need it.
 - `build` - this folder will be created after you run a grunt task.
 	-   `index.debug.html` - this is the same index as generated on the dev task. Useful for debugging in production.
 - `deploy` - this folder contains a deploy-ready, commit-hash-versioned folder of your app
     -   `<git-commit-hash>` - the name of this folder is the hash of your current commit
-    -   `<env>` - this folder contains only the necessary files for referencing your app - in this case, the index is enough
-
-### A Thousand Words
-
-![Structure](speedbag.png)
+    -   `versions/<env>` - this folder contains a deployable version of your app
 
 ------
 
