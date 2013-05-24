@@ -5,14 +5,18 @@ module.exports = (grunt) ->
 	pacha = grunt.file.readJSON('tools/pachamama/pachamama.config')[0]
 	# Project configuration.
 	grunt.initConfig
-		environment: process.env['DEPLOY_ENV'] or 'stable'
 		resourceToken: process.env['RESOURCE_TOKEN'] or '/io'
 		gitCommit: process.env['GIT_COMMIT'] or 'GIT_COMMIT'
 		deployDirectory: path.normalize(process.env['DEPLOY_DIRECTORY'] ? 'deploy')
 		relativePath: ''
 		pkg: grunt.file.readJSON('package.json')
 		pacha: pacha
-		projectName: pacha.application
+		acronym: pacha.acronym
+		environmentName: process.env['ENVIRONMENT_NAME'] or '1-0-0'
+		buildNumber: process.env['BUILD_NUMBER'] or '1'
+		environmentType: process.env['ENVIRONMENT_TYPE'] or 'stable'
+		versionName: -> [grunt.config('acronym'), grunt.config('environmentName'), grunt.config('buildNumber'),
+										 grunt.config('environmentType')].join('-')
 		clean: ['build']
 		copy:
 			main:
@@ -35,7 +39,7 @@ module.exports = (grunt) ->
 				expand: true
 				cwd: '<%= deployDirectory %>/<%= gitCommit %>/'
 				src: ['**/*.*']
-				dest: '<%= deployDirectory %>/versions/<%= environment %>/'
+				dest: '<%= deployDirectory %>/<%= versionName() %>/'
 
 		coffee:
 			main:
@@ -72,16 +76,16 @@ module.exports = (grunt) ->
 		'string-replace':
 			deploy:
 				files:
-					'<%= deployDirectory %>/versions/<%= environment %>/index.html': ['<%= deployDirectory %>/versions/<%= environment %>/index.html']
-					'<%= deployDirectory %>/versions/<%= environment %>/index.debug.html': ['<%= deployDirectory %>/versions/<%= environment %>/index.debug.html']
+					'<%= deployDirectory %>/<%= versionName() %>/index.html': ['<%= deployDirectory %>/<%= versionName() %>/index.html']
+					'<%= deployDirectory %>/<%= versionName() %>/index.debug.html': ['<%= deployDirectory %>/<%= versionName() %>/index.debug.html']
 
 				options:
 					replacements: [
 						pattern: /src="(\.\.\/)?(?!http|\/|\/\/|\#)/ig
-						replacement: 'src="<%= resourceToken %>/<%= projectName %>/'
+						replacement: 'src="<%= resourceToken %>/<%= acronym %>/'
 					,
 						pattern: /href="(\.\.\/)?(?!http|\/|\/\/|\#)/ig
-						replacement: 'href="<%= resourceToken %>/<%= projectName %>/'
+						replacement: 'href="<%= resourceToken %>/<%= acronym %>/'
 					,
 						pattern: '<script src="http://localhost:35729/livereload.js"></script>'
 						replacement: ''
@@ -139,7 +143,10 @@ module.exports = (grunt) ->
 
 	# Generates version folder
 	grunt.registerTask 'gen-version', ->
-		grunt.log.writeln 'Deploying to environment: '.cyan + grunt.config('environment').green
+		grunt.log.writeln 'Deploying to environmentName: '.cyan + grunt.config('environmentName').green
+		grunt.log.writeln 'Deploying to buildNumber: '.cyan + grunt.config('buildNumber').green
+		grunt.log.writeln 'Deploying to environmentType: '.cyan + grunt.config('environmentType').green
+		grunt.log.writeln 'Directory: '.cyan + grunt.config('versionName')().green
 		grunt.log.writeln 'Version set to: '.cyan + grunt.config('gitCommit').green
 		grunt.log.writeln 'Rersource token set to: '.cyan + grunt.config('resourceToken').green
 		grunt.log.writeln 'Deploy folder: '.cyan + grunt.config('deployDirectory').green
@@ -159,7 +166,7 @@ module.exports = (grunt) ->
 
 		if deployExists
 			grunt.log.writeln 'Folder '.cyan + deployDir.green + ' already exists.'.cyan
-			grunt.log.writeln 'Skipping build process and generating environment folder.'.cyan
+			grunt.log.writeln 'Skipping build process and generating environmentType folder.'.cyan
 			grunt.task.run ['clean', 'gen-version']
 		else
 			grunt.task.run ['prod', 'copy:deploy', 'gen-version']
