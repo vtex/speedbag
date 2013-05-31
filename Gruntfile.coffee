@@ -38,7 +38,7 @@ module.exports = (grunt) ->
 			env:
 				expand: true
 				cwd: '<%= deployDirectory %>/<%= gitCommit %>/'
-				src: ['**/*.*']
+				src: ['**']
 				dest: '<%= deployDirectory %>/<%= versionName() %>/'
 
 		coffee:
