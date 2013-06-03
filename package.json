@@ -19,7 +19,8 @@
 		"grunt-string-replace": "~0.2.4",
 		"grunt-usemin": "~0.1.10",
 		"coffee-script": "~1.6.2",
-		"remote": "~0.2.5"
+		"remote": "~0.2.5",
+    "grunt-karma": "~0.4.4"
 	},
 	"repository": {
 		"type": "git",

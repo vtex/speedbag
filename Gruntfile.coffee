@@ -67,11 +67,13 @@ module.exports = (grunt) ->
 		usemin:
 			html: 'build/<%= relativePath %>/index.html'
 
-		jasmine:
-			test:
-				src: ['build/<%= relativePath %>/lib/zepto/zepto.js', 'build/<%= relativePath %>/js/**/*.js']
-				options:
-					specs: 'build/<%= relativePath %>/spec/*Spec.js'
+		karma:
+			options:
+				configFile: 'karma.conf.js'
+			unit:
+				background: true
+			deploy:
+				singleRun: true
 
 		'string-replace':
 			deploy:
@@ -111,8 +113,7 @@ module.exports = (grunt) ->
 
 			test:
 				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less', 'spec/**/*.coffee']
-				tasks: ['test']
-				spawn: true
+				tasks: ['dev', 'karma:unit:run']
 
 	grunt.loadNpmTasks 'grunt-contrib-connect'
 	grunt.loadNpmTasks 'grunt-contrib-concat'
@@ -122,10 +123,10 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks 'grunt-contrib-less'
 	grunt.loadNpmTasks 'grunt-contrib-uglify'
 	grunt.loadNpmTasks 'grunt-contrib-cssmin'
-	grunt.loadNpmTasks 'grunt-contrib-jasmine'
 	grunt.loadNpmTasks 'grunt-contrib-watch'
 	grunt.loadNpmTasks 'grunt-usemin'
 	grunt.loadNpmTasks 'grunt-string-replace'
+	grunt.loadNpmTasks 'grunt-karma'
 
 	grunt.registerTask 'default', ['dev-watch']
 
@@ -138,8 +139,8 @@ module.exports = (grunt) ->
 	grunt.registerTask 'prod-watch', ['prod', 'connect', 'remote', 'watch:prod']
 
 	# Test
-	grunt.registerTask 'test', ['dev', 'jasmine']
-	grunt.registerTask 'test-watch', ['test', 'watch:test']
+	grunt.registerTask 'test', ['dev', 'karma:deploy']
+	grunt.registerTask 'test-watch', ['dev', 'karma:unit', 'watch:test']
 
 	# Generates version folder
 	grunt.registerTask 'gen-version', ->
@@ -169,7 +170,7 @@ module.exports = (grunt) ->
 			grunt.log.writeln 'Skipping build process and generating environmentType folder.'.cyan
 			grunt.task.run ['clean', 'gen-version']
 		else
-			grunt.task.run ['prod', 'copy:deploy', 'gen-version']
+			grunt.task.run ['prod', 'karma:deploy', 'copy:deploy', 'gen-version']
 
 	#	Remote task
 	grunt.registerTask 'remote', 'Run Remote proxy server', ->
