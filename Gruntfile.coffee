@@ -141,6 +141,9 @@ module.exports = (grunt) ->
 	# Test
 	grunt.registerTask 'test', ['dev', 'karma:deploy']
 	grunt.registerTask 'test-watch', ['dev', 'karma:unit', 'watch:test']
+	
+	# TDD
+	grunt.registerTask 'tdd', ['dev', 'connect', 'karma:unit', 'remote', 'watch:test']
 
 	# Generates version folder
 	grunt.registerTask 'gen-version', ->
