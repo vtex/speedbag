@@ -31,13 +31,13 @@ module.exports = (grunt) ->
 				src: ['src/index.html']
 				dest: 'build/<%= relativePath %>/index.debug.html'
 
-			deploy:
+			commit:
 				expand: true
 				cwd: 'build/<%= relativePath %>/'
 				src: ['**', '!includes/**', '!coffee/**', '!**/*.less']
 				dest: '<%= deployDirectory %>/<%= gitCommit %>/'
 
-			env:
+			version:
 				expand: true
 				cwd: '<%= deployDirectory %>/<%= gitCommit %>/'
 				src: ['**']
@@ -147,6 +147,10 @@ module.exports = (grunt) ->
 	# TDD
 	grunt.registerTask 'tdd', ['dev', 'connect', 'karma:unit', 'remote', 'watch:test']
 
+	# Tasks for deploy build
+	grunt.registerTask 'gen-commit', ['clean', 'copy:main', 'coffee', 'less', 'copy:debug',
+																		'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin']
+
 	# Generates version folder
 	grunt.registerTask 'gen-version', ->
 		grunt.log.writeln 'Deploying to environmentName: '.cyan + grunt.config('environmentName').green
@@ -156,7 +160,7 @@ module.exports = (grunt) ->
 		grunt.log.writeln 'Version set to: '.cyan + grunt.config('gitCommit').green
 		grunt.log.writeln 'Rersource token set to: '.cyan + grunt.config('resourceToken').green
 		grunt.log.writeln 'Deploy folder: '.cyan + grunt.config('deployDirectory').green
-		grunt.task.run ['copy:env', 'string-replace:deploy']
+		grunt.task.run ['copy:version', 'string-replace:deploy']
 
 	# Deploy - creates deploy folder structure
 	grunt.registerTask 'deploy', ->
@@ -172,10 +176,10 @@ module.exports = (grunt) ->
 
 		if deployExists
 			grunt.log.writeln 'Folder '.cyan + deployDir.green + ' already exists.'.cyan
-			grunt.log.writeln 'Skipping build process and generating environmentType folder.'.cyan
+			grunt.log.writeln 'Skipping build process and generating version folder.'.cyan
 			grunt.task.run ['clean', 'gen-version']
 		else
-			grunt.task.run ['prod', 'karma:deploy', 'copy:deploy', 'gen-version']
+			grunt.task.run ['gen-commit', 'karma:deploy', 'copy:commit', 'gen-version']
 
 	#	Remote task
 	grunt.registerTask 'remote', 'Run Remote proxy server', ->
