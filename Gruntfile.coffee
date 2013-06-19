@@ -6,19 +6,20 @@ module.exports = (grunt) ->
 	whoami = grunt.file.readJSON('src/meta/whoami')
 	# Project configuration.
 	grunt.initConfig
-		resourceToken: process.env['RESOURCE_TOKEN'] or '/io'
-		gitCommit: process.env['GIT_COMMIT'] or 'GIT_COMMIT'
-		deployDirectory: path.normalize(process.env['DEPLOY_DIRECTORY'] ? 'deploy')
 		relativePath: ''
-		pkg: grunt.file.readJSON('package.json')
-		pacha: pacha
+		applicationRoot: process.env['APPLICATION_ROOT'] or whoami.roots[0]
+		deployDirectory: path.normalize(process.env['DEPLOY_DIRECTORY'] ? 'deploy')
+		gitCommit: process.env['GIT_COMMIT'] or 'GIT_COMMIT'
+
+		# Version variables
 		acronym: pacha.acronym
-		applicationRoot: whoami.roots[0]
 		environmentName: process.env['ENVIRONMENT_NAME'] or '01-00-00'
 		buildNumber: process.env['BUILD_NUMBER'] or '1'
 		environmentType: process.env['ENVIRONMENT_TYPE'] or 'stable'
 		versionName: -> [grunt.config('acronym'), grunt.config('environmentName'), grunt.config('buildNumber'),
 										 grunt.config('environmentType')].join('-')
+
+		# Tasks
 		clean: ['build']
 		copy:
 			main:
@@ -158,7 +159,7 @@ module.exports = (grunt) ->
 		grunt.log.writeln 'Deploying to environmentType: '.cyan + grunt.config('environmentType').green
 		grunt.log.writeln 'Directory: '.cyan + grunt.config('versionName')().green
 		grunt.log.writeln 'Version set to: '.cyan + grunt.config('gitCommit').green
-		grunt.log.writeln 'Rersource token set to: '.cyan + grunt.config('resourceToken').green
+		grunt.log.writeln 'Application root set to: '.cyan + grunt.config('applicationRoot').green
 		grunt.log.writeln 'Deploy folder: '.cyan + grunt.config('deployDirectory').green
 		grunt.task.run ['copy:version', 'string-replace:deploy']
 
