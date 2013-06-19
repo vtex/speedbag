@@ -23,7 +23,17 @@ The compiled files can be found in the `/build` folder.
 
     DEPLOY_ENV=beta GIT_COMMIT=`git rev-parse --verify HEAD` grunt deploy
 
-Have a look at the newly created deploy/master/index.html file.
+Have a look at the newly created deploy/spdbg-01-00-00-1-stable/index.html file.
+
+
+### Quick deploy explanation
+
+    The first step is compiling your assets (coffee/LESS) to the `build` folder (`gen-commit` task).
+    Then, tests are run, ensuring your app is OK (`karma-deploy` task).
+    Thirdly, your app is copied to a commit folder.
+    This folder should not have replaced strings, as it will be used as a source for the generation of versions from this commit.
+    This folder serves as a cache on the build server - the same commit should not be built twice! (`copy-commit` task)
+    Finally, a version folder is generated with replaced strings (`copy:version` and `string-replace:deploy` tasks).
 
 ### Folder structure
 
@@ -36,10 +46,7 @@ Have a look at the newly created deploy/master/index.html file.
 - `Gruntfile.coffee` - This is the configuration file for grunt. Contains all the build tasks.
 - `remote.json` - The configuration file for [Remote](https://github.com/gadr90/remote), if you need it.
 - `build` - this folder will be created after you run a grunt task.
-	-   `index.debug.html` - this is the same index as generated on the dev task. Useful for debugging in production.
-- `deploy` - this folder contains a deploy-ready, commit-hash-versioned folder of your app
-    -   `<git-commit-hash>` - the name of this folder is the hash of your current commit
-    -   `versions/<env>` - this folder contains a deployable version of your app
+	- `index.debug.html` - this is the same index as generated on the dev task. Useful for debugging in production.
 
 ------
 
