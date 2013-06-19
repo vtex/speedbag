@@ -3,6 +3,7 @@ fs = require('fs')
 
 module.exports = (grunt) ->
 	pacha = grunt.file.readJSON('tools/pachamama/pachamama.config')[0]
+	whoami = grunt.file.readJSON('src/meta/whoami')
 	# Project configuration.
 	grunt.initConfig
 		resourceToken: process.env['RESOURCE_TOKEN'] or '/io'
@@ -12,7 +13,8 @@ module.exports = (grunt) ->
 		pkg: grunt.file.readJSON('package.json')
 		pacha: pacha
 		acronym: pacha.acronym
-		environmentName: process.env['ENVIRONMENT_NAME'] or '1-0-0'
+		applicationRoot: whoami.roots[0]
+		environmentName: process.env['ENVIRONMENT_NAME'] or '01-00-00'
 		buildNumber: process.env['BUILD_NUMBER'] or '1'
 		environmentType: process.env['ENVIRONMENT_TYPE'] or 'stable'
 		versionName: -> [grunt.config('acronym'), grunt.config('environmentName'), grunt.config('buildNumber'),
@@ -84,10 +86,10 @@ module.exports = (grunt) ->
 				options:
 					replacements: [
 						pattern: /src="(\.\.\/)?(?!http|\/|\/\/|\#)/ig
-						replacement: 'src="<%= resourceToken %>/<%= acronym %>/'
+						replacement: 'src="<%= applicationRoot %>/'
 					,
 						pattern: /href="(\.\.\/)?(?!http|\/|\/\/|\#)/ig
-						replacement: 'href="<%= resourceToken %>/<%= acronym %>/'
+						replacement: 'href="<%= applicationRoot %>/'
 					,
 						pattern: '<script src="http://localhost:35729/livereload.js"></script>'
 						replacement: ''
