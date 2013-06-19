@@ -28,12 +28,12 @@ Have a look at the newly created deploy/spdbg-01-00-00-1-stable/index.html file.
 
 ### Quick deploy explanation
 
-    The first step is compiling your assets (coffee/LESS) to the `build` folder (`gen-commit` task).
-    Then, tests are run, ensuring your app is OK (`karma-deploy` task).
-    Thirdly, your app is copied to a commit folder.
-    This folder should not have replaced strings, as it will be used as a source for the generation of versions from this commit.
-    This folder serves as a cache on the build server - the same commit should not be built twice! (`copy-commit` task)
-    Finally, a version folder is generated with replaced strings (`copy:version` and `string-replace:deploy` tasks).
+- The first step is compiling your assets (coffee/LESS) to the `build` folder (`gen-commit` task).
+- Then, tests are run, ensuring your app is OK (`karma-deploy` task).
+- Thirdly, your app is copied to a commit folder.
+This folder should not have replaced strings, as it will be used as a source for the generation of versions from this commit.
+This folder serves as a cache on the build server - the same commit should not be built twice! (`copy-commit` task)
+- Finally, a version folder is generated with replaced strings (`copy:version` and `string-replace:deploy` tasks).
 
 ### Folder structure
 
