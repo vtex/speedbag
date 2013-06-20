@@ -3,7 +3,7 @@ fs = require('fs')
 
 module.exports = (grunt) ->
 	pacha = grunt.file.readJSON('tools/pachamama/pachamama.config')[0]
-	whoami = grunt.file.readJSON('src/meta/whoami')
+	whoami = grunt.file.readJSON('meta/whoami')
 	# Project configuration.
 	grunt.initConfig
 		relativePath: ''
