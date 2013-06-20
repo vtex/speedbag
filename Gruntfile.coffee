@@ -154,13 +154,12 @@ module.exports = (grunt) ->
 
 	# Generates version folder
 	grunt.registerTask 'gen-version', ->
+		grunt.log.writeln 'Application root: '.cyan + grunt.config('applicationRoot').green
 		grunt.log.writeln 'Deploying to environmentName: '.cyan + grunt.config('environmentName').green
 		grunt.log.writeln 'Deploying to buildNumber: '.cyan + grunt.config('buildNumber').green
 		grunt.log.writeln 'Deploying to environmentType: '.cyan + grunt.config('environmentType').green
-		grunt.log.writeln 'Directory: '.cyan + grunt.config('versionName')().green
-		grunt.log.writeln 'Version set to: '.cyan + grunt.config('gitCommit').green
-		grunt.log.writeln 'Application root set to: '.cyan + grunt.config('applicationRoot').green
-		grunt.log.writeln 'Deploy folder: '.cyan + grunt.config('deployDirectory').green
+		grunt.log.writeln 'Version name: '.cyan + grunt.config('versionName')().green
+		grunt.log.writeln 'Version deploy directory: '.cyan + (path.resolve grunt.config('deployDirectory'), grunt.config('versionName')()).green
 		grunt.task.run ['copy:version', 'string-replace:deploy']
 
 	# Deploy - creates deploy folder structure
@@ -168,7 +167,8 @@ module.exports = (grunt) ->
 		commit = grunt.config('gitCommit')
 		deployDir = path.resolve grunt.config('deployDirectory'), commit
 		deployExists = false
-		grunt.log.writeln 'Version deploy dir set to: '.cyan + deployDir.green
+		grunt.log.writeln 'Commit: '.cyan + grunt.config('gitCommit').green
+		grunt.log.writeln 'Commit deploy directory: '.cyan + deployDir.green
 		try
 			deployExists = fs.existsSync deployDir
 		catch e
