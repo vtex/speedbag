@@ -95,6 +95,9 @@ module.exports = (grunt) ->
 					replacements: [
 						pattern: new RegExp(tagServiceEndpoint, "gi")
 						replacement: '<%= serviceEndpoint %>/'
+					,
+						pattern: new RegExp(tagApplicationRoot, "gi")
+						replacement: ''
 					]
 			# This replacement treats src and href attributes which cannot contain variables in order for
 			# the minification process to work. It adds the applicationRoot tag variables before the files address.
