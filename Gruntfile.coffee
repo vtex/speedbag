@@ -6,12 +6,14 @@ module.exports = (grunt) ->
 	whoami = grunt.file.readJSON('meta/whoami')
 	# Tags
 	tagApplicationRoot = "&lt;%=@" + pacha.acronym + "_root%&gt;"
+	tagServiceEndpoint = "&lt;%=@service_endpoint%&gt;"
 
 	# Project configuration.
 	grunt.initConfig
 		# App variables
 		relativePath: ''
 		applicationRoot: process.env['APPLICATION_ROOT'] or whoami.roots[0]
+		serviceEndpoint: process.env['SERVICE_ENDPOINT'] or 'http://service.com'
 		deployDirectory: path.normalize(process.env['DEPLOY_DIRECTORY'] ? 'deploy')
 		gitCommit: process.env['GIT_COMMIT'] or 'GIT_COMMIT'
 
@@ -83,6 +85,19 @@ module.exports = (grunt) ->
 				singleRun: true
 
 		'string-replace':
+			# This replacement occurs in development time.
+			# All service endpoints must be replaced for the app to work normally.
+			dev:
+				files:
+					'build/<%= relativePath %>/index.html': ['build/<%= relativePath %>/index.html']
+
+				options:
+					replacements: [
+						pattern: new RegExp(tagServiceEndpoint, "gi")
+						replacement: '<%= serviceEndpoint %>/'
+					]
+			# This replacement treats src and href attributes which cannot contain variables in order for
+			# the minification process to work. It adds the applicationRoot tag variables before the files address.
 			commit:
 				files:
 					'<%= deployDirectory %>/<%= gitCommit %>/index.html': ['<%= deployDirectory %>/<%= gitCommit %>/index.html']
@@ -99,6 +114,7 @@ module.exports = (grunt) ->
 						pattern: '<script src="http://localhost:35729/livereload.js"></script>'
 						replacement: ''
 					]
+			# Here, all tag variables are replaced for production-ready endpoints.
 			version:
 				files:
 					'<%= deployDirectory %>/<%= versionName() %>/index.html': ['<%= deployDirectory %>/<%= versionName() %>/index.html']
@@ -106,6 +122,9 @@ module.exports = (grunt) ->
 
 				options:
 					replacements: [
+						pattern: new RegExp(tagServiceEndpoint, "gi")
+						replacement: '<%= serviceEndpoint %>/'
+					,
 						pattern: new RegExp(tagApplicationRoot, "gi")
 						replacement: '<%= applicationRoot %>/'
 					]
@@ -148,7 +167,7 @@ module.exports = (grunt) ->
 	grunt.registerTask 'default', ['dev-watch']
 
 	# Dev
-	grunt.registerTask 'dev', ['clean', 'copy:main', 'coffee', 'less']
+	grunt.registerTask 'dev', ['clean', 'copy:main', 'coffee', 'less', 'string-replace:dev']
 	grunt.registerTask 'dev-watch', ['dev', 'connect', 'remote', 'watch:dev']
 
 	# Prod - minifies files
@@ -169,6 +188,7 @@ module.exports = (grunt) ->
 	# Generates version folder
 	grunt.registerTask 'gen-version', ->
 		grunt.log.writeln 'applicationRoot: '.cyan + grunt.config('applicationRoot').green
+		grunt.log.writeln 'serviceEndpoint: '.cyan + grunt.config('serviceEndpoint').green
 		grunt.log.writeln 'environmentName: '.cyan + grunt.config('environmentName').green
 		grunt.log.writeln 'buildNumber: '.cyan + grunt.config('buildNumber').green
 		grunt.log.writeln 'environmentType: '.cyan + grunt.config('environmentType').green
