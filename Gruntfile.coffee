@@ -26,7 +26,10 @@ module.exports = (grunt) ->
 										 grunt.config('environmentType')].join('-')
 
 		# Tasks
-		clean: ['build']
+		clean: 
+			main: ['build']
+			dist: ['build', 'dist']
+
 		copy:
 			main:
 				expand: true
@@ -50,6 +53,12 @@ module.exports = (grunt) ->
 				src: ['**']
 				dest: '<%= deployDirectory %>/<%= versionName() %>/'
 
+			test: 
+				expand: true
+				cwd: 'spec/'
+				src: ['**', '!**/*.coffee']
+				dest: 'build/<%= relativePath %>/spec/'
+
 		coffee:
 			main:
 				expand: true
@@ -65,6 +74,13 @@ module.exports = (grunt) ->
 				dest: 'build/<%= relativePath %>/spec/'
 				ext: '.js'
 
+			dist:
+				expand: true
+				cwd: 'src/coffee'
+				src: ['people.coffee']
+				dest: 'dist/<%= relativePath %>/'
+				ext: '.js'
+
 		less:
 			main:
 				files:
@@ -75,6 +91,11 @@ module.exports = (grunt) ->
 
 		usemin:
 			html: 'build/<%= relativePath %>/index.html'
+
+		uglify:
+			dist:
+				files:
+					'dist/people.min.js': ['dist/people.js']
 
 		karma:
 			options:
@@ -151,7 +172,7 @@ module.exports = (grunt) ->
 				tasks: ['prod']
 
 			test:
-				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less', 'spec/**/*.coffee']
+				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less', 'spec/**/*.*']
 				tasks: ['dev', 'karma:unit:run']
 
 	grunt.loadNpmTasks 'grunt-contrib-connect'
@@ -170,7 +191,7 @@ module.exports = (grunt) ->
 	grunt.registerTask 'default', ['dev-watch']
 
 	# Dev
-	grunt.registerTask 'dev', ['clean', 'copy:main', 'coffee', 'less', 'string-replace:dev']
+	grunt.registerTask 'dev', ['clean', 'copy:main', 'copy:test', 'coffee', 'less', 'string-replace:dev']
 	grunt.registerTask 'dev-watch', ['dev', 'connect', 'remote', 'watch:dev']
 
 	# Prod - minifies files
@@ -182,11 +203,15 @@ module.exports = (grunt) ->
 	grunt.registerTask 'test-watch', ['dev', 'karma:unit', 'watch:test']
 	
 	# TDD
-	grunt.registerTask 'tdd', ['dev', 'connect', 'karma:unit', 'remote', 'watch:test']
+	grunt.registerTask 'tdd', ['dev', 'connect', 'remote', 'karma:unit', 'watch:test']
+
+	# Dist
+	grunt.registerTask 'dist', ['clean', 'coffee:dist', 'uglify:dist']
 
 	# Tasks for deploy build
-	grunt.registerTask 'gen-commit', ['clean', 'copy:main', 'coffee', 'less', 'copy:debug',
-																		'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin', 'copy:commit', 'string-replace:commit']
+	grunt.registerTask 'gen-commit', ['clean', 'copy:main', 'copy:test', 'coffee', 'less', 'copy:debug',
+										'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin',
+										'copy:commit', 'string-replace:commit']
 
 	# Generates version folder
 	grunt.registerTask 'gen-version', ->
