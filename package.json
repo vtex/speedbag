@@ -20,7 +20,7 @@
 		"grunt-usemin": "~0.1.10",
 		"coffee-script": "~1.6.2",
 		"remote": "~0.2.5",
-    "grunt-karma": "~0.4.4"
+    	"grunt-karma": "~0.4.4"
 	},
 	"repository": {
 		"type": "git",
@@ -32,6 +32,11 @@
 		"less",
 		"livereload"
 	],
-	"author": "Guilherme Rodrigues <gadr90@gmail.com>",
+	"contributors": [
+		"Guilherme Rodrigues <gadr90@gmail.com>",
+		"Breno Calazans <brenocalazans@gmail.com>",
+		"Luca Cantini <lucafmcantini@gmail.com>",
+		"Guilherme Berger"
+	],
 	"license": "MIT"
 }
