@@ -132,7 +132,7 @@ module.exports = (grunt) ->
 						pattern: /src="(\.\.\/)?(?!http|\/|\/\/|\#|\&|\'\&)/ig
 						replacement: 'src="' + tagApplicationRoot
 					,
-						pattern: /href="(\.\.\/)?(?!http|\/|\/\/|\#|\&|\'\&)/ig
+						pattern: /href="(\.\.\/)?(?!http|\/|\/\/|\#|\&|\'\&|javascript\:void\(0\)\;)/ig
 						replacement: 'href="' + tagApplicationRoot
 					,
 						pattern: '<script src="http://localhost:35729/livereload.js"></script>'
