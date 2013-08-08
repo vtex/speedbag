@@ -1,6 +1,6 @@
 {
 	"name": "speedbag",
-	"version": "0.3.1",
+	"version": "0.4.0",
 	"readmeFilename": "README.md",
 	"description": "A grunt coffee/less/live-reload/cssmin/uglify/connect/bootstrap/zepto/lodash boilerplate.",
 	"main": "index.html",
@@ -14,13 +14,12 @@
 		"grunt-contrib-less": "~0.5.0",
 		"grunt-contrib-uglify": "~0.2.0",
 		"grunt-contrib-concat": "~0.2.0",
-		"grunt-contrib-jasmine": "~0.4.2",
 		"grunt-contrib-watch": "~0.4.0",
 		"grunt-string-replace": "~0.2.4",
 		"grunt-usemin": "~0.1.10",
+		"grunt-karma": "~0.4.4",
 		"coffee-script": "~1.6.2",
-		"remote": "~0.2.5",
-    	"grunt-karma": "~0.4.4"
+		"remote": "~0.2.5"
 	},
 	"repository": {
 		"type": "git",

@@ -10,6 +10,6 @@
 		"zepto": "1.0.0"
 	},
 	"install": {
-		"path": "src/lib/bower_components"
+		"path": "src/lib"
 	}
 }

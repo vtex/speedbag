@@ -4,37 +4,25 @@ A grunt coffee/less/live-reload/cssmin/uglify/connect/bootstrap/zepto/lodash boi
 
 Check out the [live demo](http://vtex.github.io/speedbag)
 
-Requires [node](http://nodejs.org/) and [grunt](http://gruntjs.com/) (`npm i -g grunt-cli`).
+Requires [node](http://nodejs.org/), [grunt](http://gruntjs.com/), bower and bower-installer (`npm i -g grunt-cli bower bower-installer`).
 
 ### Speedstart
 
     npm i
+    bower-installer
     grunt
 
 Have fun! Changes to your coffee, less or html files will reload the page automatically. Nice.
 
 The compiled files can be found in the `/build` folder.
 
-### Production build
+### Testing
 
-    grunt prod
+    grunt test
 
-### Deployment build
+### Distributable build (minifies, etc.)
 
-    DEPLOY_ENV=beta GIT_COMMIT=`git rev-parse --verify HEAD` grunt deploy
-
-Have a look at the newly created deploy/spdbg-01-00-00-1-stable/index.html file.
-
-
-### Quick deploy explanation
-
-- The first step is compiling your assets (coffee/LESS) to the `build` folder (`gen-commit` task).
-- Then, tests are run, ensuring your app is OK (`karma-deploy` task).
-- Thirdly, your app is copied to a commit folder.
-This folder should have all variable tags in the form "&lt;%=@VARIABLE%&gt;".
-Use the `string-replace:commit` task to replace anything else you need!
-This folder serves as a cache on the build server - the same commit should never be built twice!
-- Finally, a version folder is generated, replacing all variable tags for correct values (`gen-version` task).
+    grunt dist
 
 ### Folder structure
 
