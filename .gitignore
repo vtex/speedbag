@@ -3,3 +3,4 @@ deploy/
 node_modules/
 .idea/
 bower_components/
+npm-debug.log

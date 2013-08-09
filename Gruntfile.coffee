@@ -83,6 +83,8 @@ module.exports = (grunt) ->
 					port: 9001
 					base: 'build/'
 
+		remote: {main: {}}
+
 		watch:
 			main:
 				options:
@@ -90,11 +92,13 @@ module.exports = (grunt) ->
 				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less']
 				tasks: ['build', 'karma:unit:run']
 
+		concurrent:
+			transform: ['copy:main', 'coffee', 'less']
+
 	grunt.loadNpmTasks name for name of grunt.file.readJSON('package.json').dependencies when name[0..5] is 'grunt-'
 
 	grunt.registerTask 'default', ['build', 'server', 'karma:unit', 'watch:main']
-	grunt.registerTask 'build', ['clean', 'copy:main', 'coffee', 'less', 'string-replace']
+	grunt.registerTask 'build', ['clean', 'concurrent:transform', 'string-replace']
 	grunt.registerTask 'dist', ['build', 'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin'] 	# Dist - minifies files
 	grunt.registerTask 'test', ['karma:single']
 	grunt.registerTask 'server', ['connect', 'remote']
-	grunt.registerTask 'remote', 'Run Remote proxy server', -> require('coffee-script') and require('remote')()
