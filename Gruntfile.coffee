@@ -83,7 +83,7 @@ module.exports = (grunt) ->
 					port: 9001
 					base: 'build/'
 
-		remote: {main: {}}
+		remote: main: {}
 
 		watch:
 			main:
