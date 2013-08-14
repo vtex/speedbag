@@ -36,6 +36,7 @@ The compiled files can be found in the `/build` folder.
 - `remote.json` - The configuration file for [Remote](https://github.com/gadr90/remote), if you need it.
 - `build` - this folder will be created after you run a grunt task.
 	- `index.debug.html` - this is the same index as generated on the dev task. Useful for debugging in production.
+- `build-raw` - this folder contains your built app before any string-replacements.
 
 ------
 
