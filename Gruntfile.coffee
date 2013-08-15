@@ -1,14 +1,9 @@
 module.exports = (grunt) ->
-	replacements =
-		'SERVICE_ENDPOINT': 'http://service.com'
-		'VTEX_IO_HOST': 'io.vtex.com.br'
+	pkg = grunt.file.readJSON('package.json')
 
-	processContentHost = (host) ->
-		(content, path, versionDirectory) ->
-			return content unless path in ['index.html', 'index.debug.html']
-			return content
-				.replace(/src="(\.\.\/)?(?!http|\/|\/\/|\#|\&|\'\&)/ig, 'src="//' + host + '/' + versionDirectory)
-				.replace(/href="(\.\.\/)?(?!http|\/|\/\/|\#|\&|\'\&|javascript\:void\(0\)\;)/ig, 'href="//' + host + '/' + versionDirectory)
+	replacements =
+		'VTEX_IO_HOST': 'io.vtex.com.br'
+		'VERSION': pkg.version
 
 	# Project configuration.
 	grunt.initConfig
@@ -37,7 +32,7 @@ module.exports = (grunt) ->
 			build:
 				expand: true
 				cwd: 'build-raw/'
-				src: '*'
+				src: '**/*.*'
 				dest: 'build/'
 
 		coffee:
@@ -88,7 +83,7 @@ module.exports = (grunt) ->
 					'build/<%= relativePath %>/index.html': ['build-raw/<%= relativePath %>/index.html']
 					'build/<%= relativePath %>/index.debug.html': ['build-raw/<%= relativePath %>/index.debug.html']
 				options:
-					replacements: ({'pattern': new RegExp(key, "gi"), 'replacement': value} for key, value of replacements)
+					replacements: ({'pattern': new RegExp(key, "g"), 'replacement': value} for key, value of replacements)
 
 		connect:
 			main:
@@ -111,24 +106,24 @@ module.exports = (grunt) ->
 		vtex_deploy:
 			main:
 				options:
-					s3ConfigFile: '/home/guilherme/s3.json',
-					indexPath: 'build/index.html',
-					processContent: processContentHost("io.vtex.com.br")
-					whoamiPath: 'whoami',
-					dryRun: true
+					buildDirectory: 'build'
+					indexPath: 'build/index.html'
+					whoamiPath: 'whoami'
+					includeHostname:
+						hostname: 'io.vtex.com.br'
+						files: ["build/index.html", "build/index.debug.html"]
 			walmart:
 				options:
-					buildDirectory: 'build-raw',
-					s3ConfigFile: '/home/guilherme/s3.json',
-					bucket: 'vtex-io-walmart',
-					requireEnvironmentType: 'stable',
-					processContent: processContentHost("VTEX_IO_HOST")
-					dryRun: true
+					buildDirectory: 'build-raw'
+					bucket: 'vtex-io-walmart'
+					requireEnvironmentType: 'stable'
+					includeHostname:
+						hostname: 'VTEX_IO_HOST'
+						files: ["build-raw/index.html", "build-raw/index.debug.html"]
 
-	grunt.loadNpmTasks name for name of grunt.file.readJSON('package.json').dependencies when name[0..5] is 'grunt-'
+	grunt.loadNpmTasks name for name of pkg.dependencies when name[0..5] is 'grunt-'
 
-	grunt.registerTask 'default', ['build', 'server', 'karma:unit', 'watch:main']
-	grunt.registerTask 'build', ['clean', 'concurrent:transform', 'copy:build', 'string-replace']
-	grunt.registerTask 'dist', ['build', 'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin'] # Dist - minifies files
+	grunt.registerTask 'default', ['clean', 'concurrent:transform', 'copy:build', 'string-replace', 'server', 'karma:unit', 'watch:main']
+	grunt.registerTask 'dist', ['clean', 'concurrent:transform', 'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin', 'copy:build', 'string-replace'] # Dist - minifies files
 	grunt.registerTask 'test', ['karma:single']
 	grunt.registerTask 'server', ['connect', 'remote']

@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="">
 	<meta name="author" content="">
+	<meta name="vtex-version" content="VERSION">
     <!-- build:css style/style.css -->
     <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css"/>
     <link rel="stylesheet" href="style/main.css"/>
@@ -51,9 +52,8 @@
 	</div>
 </div>
 <script src="http://localhost:35729/livereload.js"></script>
-<script type="text/javascript" src="SERVICE_ENDPOINT/js/example.js"></script>
-<script type="text/javascript">window.serviceEndpoint = 'SERVICE_ENDPOINT'</script>
-<script type="text/javascript">window.applicationRoot = 'APPLICATION_ROOT'</script>
+<script type="text/javascript">window.applicationRoot = 'VTEX_IO_HOST'</script>
+<script type="text/javascript">console.log("VERSION");</script>
 <!-- build:js js/lib.js -->
 <script type="text/javascript" src="lib/zepto/zepto.js"></script>
 <script>jQuery = $;</script>
