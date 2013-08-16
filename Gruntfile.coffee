@@ -23,11 +23,6 @@ module.exports = (grunt) ->
 				,
 					src: ['src/index.html']
 					dest: 'build-raw/<%= relativePath %>/index.debug.html'
-				,
-					expand: true
-					cwd: 'spec/'
-					src: ['**', '!**/*.coffee']
-					dest: 'build-raw/<%= relativePath %>/spec/'
 				]
 			build:
 				expand: true
@@ -42,12 +37,6 @@ module.exports = (grunt) ->
 					cwd: 'src/coffee'
 					src: ['**/*.coffee']
 					dest: 'build-raw/<%= relativePath %>/js/'
-					ext: '.js'
-				,
-					expand: true
-					cwd: 'spec/'
-					src: ['**/*.coffee']
-					dest: 'build-raw/<%= relativePath %>/spec/'
 					ext: '.js'
 				]
 

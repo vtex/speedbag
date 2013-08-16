@@ -1,8 +1,12 @@
+preprocessors = {
+	"**/*.coffee": "coffee"
+};
+
 files = [
 	JASMINE,
 	JASMINE_ADAPTER,
 	'build/js/people.js',
-	'build/spec/**/*.js'
+	'spec/**/*.coffee'
 ];
 browsers = [
 	'PhantomJS'
