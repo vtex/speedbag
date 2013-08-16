@@ -11,7 +11,7 @@ module.exports = (grunt) ->
 
 		# Tasks
 		clean: 
-			main: ['build', 'build-raw']
+			main: ['build', 'build-raw', 'tmp-deploy']
 
 		copy:
 			main:
