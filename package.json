@@ -1,6 +1,6 @@
 {
   "name": "speedbag",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "readmeFilename": "README.md",
   "description": "A grunt coffee/less/live-reload/cssmin/uglify/connect/bootstrap/zepto/lodash boilerplate.",
   "main": "index.html",

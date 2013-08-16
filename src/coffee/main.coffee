@@ -1,4 +1,3 @@
 $ ->
-	console.log 'Welcome to Speedbag.'
-	console.log "Service endpoint: #{window.serviceEndpoint}"
+	console.log "Welcome to Speedbag v#{window.version}."
 	console.log "Application root: #{window.applicationRoot}"

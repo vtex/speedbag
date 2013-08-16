@@ -4,7 +4,7 @@ A grunt coffee/less/live-reload/cssmin/uglify/connect/bootstrap/zepto/lodash boi
 
 Check out the [live demo](http://vtex.github.io/speedbag)
 
-Requires [node](http://nodejs.org/), [grunt](http://gruntjs.com/), bower and bower-installer (`npm i -g grunt-cli bower bower-installer`).
+Requires [node](http://nodejs.org/), [grunt](http://gruntjs.com/), bower and bower-installer (`[sudo] npm i -g grunt-cli bower bower-installer`).
 
 ### Speedstart
 
