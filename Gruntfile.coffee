@@ -87,7 +87,7 @@ module.exports = (grunt) ->
 				options:
 					livereload: true
 				files: ['src/**/*.html', 'src/**/*.coffee', 'src/**/*.js', 'src/**/*.less']
-				tasks: ['build', 'karma:unit:run']
+				tasks: ['clean', 'concurrent:transform', 'copy:build', 'string-replace', 'karma:unit:run']
 
 		concurrent:
 			transform: ['copy:main', 'coffee', 'less']
