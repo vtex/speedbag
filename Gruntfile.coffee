@@ -60,7 +60,7 @@ module.exports = (grunt) ->
 
 		karma:
 			options:
-				configFile: 'karma.conf.js'
+				configFile: 'karma.conf.coffee'
 			unit:
 				background: true
 			single:

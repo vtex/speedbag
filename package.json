@@ -18,7 +18,7 @@
     "grunt-concurrent": "~0.3.0",
     "grunt-string-replace": "~0.2.4",
     "grunt-usemin": "~0.1.10",
-    "grunt-karma": "~0.4.4",
+    "grunt-karma": "~0.6.1",
     "grunt-vtex-deploy": "~0.2.2",
     "grunt-remote": "~0.1.1"
   },
