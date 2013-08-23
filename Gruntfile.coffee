@@ -111,6 +111,8 @@ module.exports = (grunt) ->
 			walmart:
 				options:
 					buildDirectory: 'build-raw'
+					indexPath: 'build-raw/index.html'
+					indexOnRoot: true
 					bucket: 'vtex-io-walmart'
 					requireEnvironmentType: 'stable'
 					includeHostname:
