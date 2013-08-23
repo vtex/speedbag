@@ -50,6 +50,7 @@ module.exports = (grunt) ->
 
 		usemin:
 			html: 'build-raw/<%= relativePath %>/index.html'
+			options: {script: true, css: true, image: false, require: false, datatags: false, background: false, anchors: false, input: false}
 
 		### example - we actually use grunt-usemin to min. check index.html for the build tags
 		uglify:
@@ -93,6 +94,10 @@ module.exports = (grunt) ->
 			transform: ['copy:main', 'coffee', 'less']
 
 		vtex_deploy:
+			dryrun:
+				options:
+					requireEnvironmentType: 'dryrun'
+					dryRun: true
 			main:
 				options:
 					buildDirectory: 'build'
