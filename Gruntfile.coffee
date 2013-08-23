@@ -96,6 +96,8 @@ module.exports = (grunt) ->
 		vtex_deploy:
 			dryrun:
 				options:
+					indexPath: 'build/index.html'
+					whoamiPath: 'whoami'
 					requireEnvironmentType: 'dryrun'
 					dryRun: true
 			main:
