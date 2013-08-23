@@ -96,13 +96,14 @@ module.exports = (grunt) ->
 		vtex_deploy:
 			dryrun:
 				options:
+					buildDirectory: 'build/<%= relativePath %>'
 					indexPath: 'build/index.html'
 					whoamiPath: 'whoami'
 					requireEnvironmentType: 'dryrun'
 					dryRun: true
 			main:
 				options:
-					buildDirectory: 'build'
+					buildDirectory: 'build/<%= relativePath %>'
 					indexPath: 'build/index.html'
 					whoamiPath: 'whoami'
 					includeHostname:
@@ -110,7 +111,7 @@ module.exports = (grunt) ->
 						files: ["build/index.html", "build/index.debug.html"]
 			walmart:
 				options:
-					buildDirectory: 'build-raw'
+					buildDirectory: 'build-raw/<%= relativePath %>'
 					indexPath: 'build-raw/index.html'
 					indexOnRoot: true
 					bucket: 'vtex-io-walmart'
