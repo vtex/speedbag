@@ -1,6 +1,6 @@
 {
 	"name": "speedbag",
-	"version": "1.0.3",
+	"version": "1.0.7",
 	"main": [
 		"dist/people.js", "dist/people.min.js"
 	],
