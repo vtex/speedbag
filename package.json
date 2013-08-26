@@ -19,7 +19,7 @@
     "grunt-string-replace": "~0.2.4",
     "grunt-usemin": "git+https://github.com/MaximKraev/grunt-usemin.git#7c08c211422cc722b3423eac306ba2883c9b1f2f",
     "grunt-karma": "~0.6.1",
-    "grunt-vtex-deploy": "~0.5.2",
+    "grunt-vtex-deploy": "~0.6.0",
     "grunt-remote": "~0.1.1"
   },
   "repository": {

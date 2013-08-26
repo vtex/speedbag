@@ -94,13 +94,6 @@ module.exports = (grunt) ->
 			transform: ['copy:main', 'coffee', 'less']
 
 		vtex_deploy:
-			dryrun:
-				options:
-					buildDirectory: 'build/<%= relativePath %>'
-					indexPath: 'build/index.html'
-					whoamiPath: 'whoami'
-					requireEnvironmentType: 'dryrun'
-					dryRun: true
 			main:
 				options:
 					buildDirectory: 'build/<%= relativePath %>'
@@ -108,7 +101,7 @@ module.exports = (grunt) ->
 					whoamiPath: 'whoami'
 					includeHostname:
 						hostname: 'io.vtex.com.br'
-						files: ["build/index.html", "build/index.debug.html"]
+						files: ["build/index.html", "build/index.debug.html", "build/js/app.js", "build/js/main.js"]
 			walmart:
 				options:
 					buildDirectory: 'build-raw/<%= relativePath %>'
@@ -118,7 +111,7 @@ module.exports = (grunt) ->
 					requireEnvironmentType: 'stable'
 					includeHostname:
 						hostname: 'VTEX_IO_HOST'
-						files: ["build-raw/index.html", "build-raw/index.debug.html"]
+						files: ["build-raw/index.html", "build-raw/index.debug.html", "build-raw/js/app.js", "build-raw/js/main.js"]
 
 	grunt.loadNpmTasks name for name of pkg.dependencies when name[0..5] is 'grunt-'
 
