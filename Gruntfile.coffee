@@ -3,7 +3,7 @@ module.exports = (grunt) ->
 
 	replacements =
 		'VTEX_IO_HOST': 'io.vtex.com.br'
-		'VERSION': pkg.version
+		'VERSION_NUMBER': pkg.version
 
 	# Project configuration.
 	grunt.initConfig
@@ -72,6 +72,8 @@ module.exports = (grunt) ->
 				files:
 					'build/<%= relativePath %>/index.html': ['build-raw/<%= relativePath %>/index.html']
 					'build/<%= relativePath %>/index.debug.html': ['build-raw/<%= relativePath %>/index.debug.html']
+					'build/<%= relativePath %>/js/app.js': ['build-raw/<%= relativePath %>/js/app.js']
+					'build/<%= relativePath %>/js/main.js': ['build-raw/<%= relativePath %>/js/main.js']
 				options:
 					replacements: ({'pattern': new RegExp(key, "g"), 'replacement': value} for key, value of replacements)
 
