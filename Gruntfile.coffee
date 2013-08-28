@@ -2,8 +2,12 @@ module.exports = (grunt) ->
 	pkg = grunt.file.readJSON('package.json')
 
 	replacements =
-		'VTEX_IO_HOST': 'io.vtex.com.br'
-		'VERSION_NUMBER': pkg.version
+		dev:
+			'//VTEX_IO_HOST/VERSION_DIRECTORY': ''
+			'VERSION_NUMBER': pkg.version
+		dist:
+			'VTEX_IO_HOST': 'io.vtex.com.br'
+			'VERSION_NUMBER': pkg.version
 
 	# Project configuration.
 	grunt.initConfig
@@ -68,14 +72,22 @@ module.exports = (grunt) ->
 				singleRun: true
 
 		'string-replace':
-			main:
+			dev:
 				files:
 					'build/<%= relativePath %>/index.html': ['build-raw/<%= relativePath %>/index.html']
 					'build/<%= relativePath %>/index.debug.html': ['build-raw/<%= relativePath %>/index.debug.html']
 					'build/<%= relativePath %>/js/app.js': ['build-raw/<%= relativePath %>/js/app.js']
 					'build/<%= relativePath %>/js/main.js': ['build-raw/<%= relativePath %>/js/main.js']
 				options:
-					replacements: ({'pattern': new RegExp(key, "g"), 'replacement': value} for key, value of replacements)
+					replacements: ({'pattern': new RegExp(key, "g"), 'replacement': value} for key, value of replacements.dev)
+			dist:
+				files:
+					'build/<%= relativePath %>/index.html': ['build-raw/<%= relativePath %>/index.html']
+					'build/<%= relativePath %>/index.debug.html': ['build-raw/<%= relativePath %>/index.debug.html']
+					'build/<%= relativePath %>/js/app.js': ['build-raw/<%= relativePath %>/js/app.js']
+					'build/<%= relativePath %>/js/main.js': ['build-raw/<%= relativePath %>/js/main.js']
+				options:
+					replacements: ({'pattern': new RegExp(key, "g"), 'replacement': value} for key, value of replacements.dist)
 
 		connect:
 			main:
@@ -86,11 +98,11 @@ module.exports = (grunt) ->
 		remote: main: {}
 
 		watch:
-			main:
+			dev:
 				options:
 					livereload: true
 				files: ['src/**/*.html', 'src/**/*.coffee', 'spec/**/*.coffee', 'src/**/*.js', 'src/**/*.less']
-				tasks: ['clean', 'concurrent:transform', 'copy:build', 'string-replace', 'karma:unit:run']
+				tasks: ['clean', 'concurrent:transform', 'copy:build', 'string-replace:dev', 'karma:unit:run']
 
 		concurrent:
 			transform: ['copy:main', 'coffee', 'less']
@@ -117,7 +129,9 @@ module.exports = (grunt) ->
 
 	grunt.loadNpmTasks name for name of pkg.dependencies when name[0..5] is 'grunt-'
 
-	grunt.registerTask 'default', ['clean', 'concurrent:transform', 'copy:build', 'string-replace', 'server', 'karma:unit', 'watch:main']
-	grunt.registerTask 'dist', ['clean', 'concurrent:transform', 'useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin', 'copy:build', 'string-replace'] # Dist - minifies files
+	grunt.registerTask 'default', ['clean', 'concurrent:transform', 'copy:build', 'string-replace:dev', 'server', 'karma:unit', 'watch']
+	grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin'] # minifies files
+	grunt.registerTask 'devmin', ['clean', 'concurrent:transform', 'min', 'copy:build', 'string-replace:dev', 'server', 'watch'] # Dev - minifies files
+	grunt.registerTask 'dist', ['clean', 'concurrent:transform', 'min', 'copy:build', 'string-replace:dist'] # Dist - minifies files
 	grunt.registerTask 'test', ['karma:single']
 	grunt.registerTask 'server', ['connect', 'remote']
