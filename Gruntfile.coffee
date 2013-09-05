@@ -58,6 +58,8 @@ module.exports = (grunt) ->
 
 		### example - we actually use grunt-usemin to min. check index.html for the build tags
 		uglify:
+  		options:
+  			mangle: false
 			dist:
 				files:
 					'dist/people.min.js': ['dist/people.js']
@@ -127,7 +129,7 @@ module.exports = (grunt) ->
 						hostname: 'VTEX_IO_HOST'
 						files: ["build-raw/index.html", "build-raw/index.debug.html", "build-raw/js/app.js", "build-raw/js/main.js"]
 
-	grunt.loadNpmTasks name for name of pkg.dependencies when name[0..5] is 'grunt-'
+	grunt.loadNpmTasks name for name of pkg.devDependencies when name[0..5] is 'grunt-'
 
 	grunt.registerTask 'default', ['clean', 'concurrent:transform', 'copy:build', 'string-replace:dev', 'server', 'karma:unit', 'watch']
 	grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin'] # minifies files
