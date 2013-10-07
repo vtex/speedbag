@@ -141,8 +141,22 @@ Generator.prototype.readIndex = function readIndex() {
 Generator.prototype.bootstrapIndex = function bootstrapJS() {
 
 	this.indexFile = this.appendScripts(this.indexFile, 'scripts/plugins.js', [
+		'bower_components/jquery/jquery.min.js',
+		'bower_components/angular/angular.min.js',
+		'bower_components/angular-cookies/angular-cookies.min.js',
+		'bower_components/angular-mocks/angular-mocks.js',
+		'bower_components/angular-resource/angular-resource.min.js',
+		'bower_components/angular-sanitize/angular-sanitize.min.js',
+		'bower_components/angular-scenario/angular-scenario.js',
+		'bower_components/checkout-sdk/dist/checkout.sdk.min.js',
+		'bower_components/front-i18n/dist/vtex-i18n.min.js',
+		'bower_components/front-i18n/dist/vtex-locale-selector.min.js',
+		'bower_components/front-messages-ui/dist/vtex-message.min.js',
+		'bower_components/front-phone/dist/vtex-phone.js',
+		'bower_components/front-utils/dist/vtex-context.min.js',
+		'bower_components/front-utils/dist/vtex-utils.min.js'
+
 		// Aqui eu tenho que settar todas as propriedade que vão entrar no index
-		// com ifs para verificar as respostas do usuario
 	]);
 };
 
