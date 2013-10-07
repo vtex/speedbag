@@ -1,0 +1,26 @@
+{
+	"name": "<%= _.camelize(appname) %>",
+	"version": "0.0.0",
+	"dependencies": {
+		<% if (bootstrap) { %>"bootstrap": "~2.3.2",<% } %>
+		<% if (jquery) { %>"jQuery": "~1.8.3",<% } %>
+		<% if (utils) { %>
+		"front-utils": "vtex/front.utils#1.0.0",
+		"front-messages-ui": "vtex/front.messages#1.4.4",
+		"front-i18n": "vtex/front.i18n#0.3",
+		"front-phone": "vtex/front.phone#2",
+		"checkout-sdk": "vtex/front.checkout-sdk",
+		<% } %>
+		<% if (lodash) { %>"lodash": "~2.1.0",<% } %>
+		<% if (angular) { %>"angular": "~1.0.7",<% } %>
+		<% if (resourceModule) { %>"angular-resource": "~1.0.7",<% } %>
+		<% if (cookiesModule) { %>"angular-cookies": "~1.0.7",<% } %>
+		<% if (sanitizeModule) { %>"angular-sanitize": "~1.0.7",<% } %>
+		<% if (bootstrapBower) { %>"bootstrap-bower": "angular-ui/bootstrap-bower#0.6.0"<% } %>
+
+},
+"devDependencies": {
+		<% if (angularMocks) { %>"angular-mocks": "~1.0.7",<% } %>
+		<% if (angularScenario) { %>"angular-scenario": "~1.0.7"<% } %>
+	}
+}
