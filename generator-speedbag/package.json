@@ -1,9 +1,9 @@
 {
   "name": "generator-speedbag",
   "version": "0.0.0",
-  "description": "A generator for Yeoman",
+  "description": "A generator for VtexApplications",
   "keywords": [
-    "yeoman-generator"
+    "generator-speedbag-yeoman"
   ],
   "homepage": "https://github.com/lucantini/generator-speedbag",
   "bugs": "https://github.com/lucantini/generator-speedbag/issues",
