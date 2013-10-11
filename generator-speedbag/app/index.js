@@ -70,7 +70,7 @@ Generator.prototype.askForAngular = function askForAngular() {
 		default: true
 	}, {
 		type: 'checkbox',
-		name: 'angularMocksAndScenario',
+		name: 'angularMnS',
 		message: 'Would you like Angular Scenario and/or Angular Mocks?',
 		when: function (props) {
 			return props.angular;
@@ -87,10 +87,11 @@ Generator.prototype.askForAngular = function askForAngular() {
 	}], function (props) {
 		this.angular = props.angular;
 
-		var hasMod = function (mod) { return props.angularMocksAndScenario.indexOf(mod) !== -1; };
-		this.angularMocks = hasMod('angularMocks');
-		this.angularScenario = hasMod('angularScenario');
-
+		if(this.angular){
+			var hasMod = function (mod) { return props.angularMnS.indexOf(mod) !== -1; };
+			this.angularMocks = hasMod('angularMocks');
+			this.angularScenario = hasMod('angularScenario');
+		}
 		cb();
 	}.bind(this));
 };
@@ -121,17 +122,17 @@ Generator.prototype.askForModules = function askForModules() {
 				checked: true
 			}]
 		}];
+
+		this.prompt(prompts, function (props) {
+			var hasMod = function (mod) { return props.modules.indexOf(mod) !== -1; };
+			this.resourceModule = hasMod('resourceModule');
+			this.cookiesModule = hasMod('cookiesModule');
+			this.sanitizeModule = hasMod('sanitizeModule');
+			this.bootstrapBower = hasMod('bootstrapBower');
+
+			cb();
+		}.bind(this));
 	}
-
-	this.prompt(prompts, function (props) {
-		var hasMod = function (mod) { return props.modules.indexOf(mod) !== -1; };
-		this.resourceModule = hasMod('resourceModule');
-		this.cookiesModule = hasMod('cookiesModule');
-		this.sanitizeModule = hasMod('sanitizeModule');
-		this.bootstrapBower = hasMod('bootstrapBower');
-
-		cb();
-	}.bind(this));
 };
 
 Generator.prototype.readIndex = function readIndex() {
@@ -157,6 +158,8 @@ Generator.prototype.bootstrapIndex = function bootstrapJS() {
 		'bower_components/front-utils/dist/vtex-utils.min.js'
 
 		// Aqui eu tenho que settar todas as propriedade que vão entrar no index
+		// Essa parte tem que ser feita com ifs, se não ele não vai entender a referencia no bower_components,
+		// porque ela não vai existir.
 	]);
 };
 
