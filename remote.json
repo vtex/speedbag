@@ -1,6 +1,6 @@
 {
 	"remote": {
-		"host": "dontpad.com",
+		"host": "leandrooriente.com",
 		"port": 80
 	},
 	"proxy": {
@@ -22,6 +22,5 @@
 	],
 	"mapping": false,
 	"mappings": {
-		"lalala":"http://dontpad.com"
 	}
 }
