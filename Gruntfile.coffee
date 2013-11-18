@@ -61,7 +61,7 @@ module.exports = (grunt) ->
 			dev:
 				options:
 					livereload: true
-				files: ['src/**/*.html', 'src/**/*.js', 'src/**/*.less', 'src/**/*.coffee', 'src/**/*.css']
+				files: ['src/**/*.html', 'src/**/*.js', 'src/**/*.less', 'src/**/*.coffee', 'src/**/*.css', '!src/libs/**/*.*']
 				tasks: ['clean', 'concurrent:transform', 'copy:build']
 
 		concurrent:
