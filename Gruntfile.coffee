@@ -13,7 +13,7 @@ module.exports = (grunt) ->
 				files: [
 					expand: true
 					cwd: 'src/'
-					src: ['**', '!**/*.less']
+					src: ['**', '!**/*.less', '!**/*.coffee']
 					dest: 'build-raw/'
 				,
 					src: ['src/index.html']
@@ -24,6 +24,16 @@ module.exports = (grunt) ->
 				cwd: 'build-raw/'
 				src: '**/*.*'
 				dest: 'build/'
+
+		coffee:
+      main:
+	      files: [
+          expand: true
+          cwd: 'src/coffee'
+          src: ['**/*.coffee']
+          dest: 'build-raw/scripts/'
+          ext: '.js'
+	      ]
 
 		less:
 			main:
@@ -61,11 +71,11 @@ module.exports = (grunt) ->
 			dev:
 				options:
 					livereload: true
-				files: ['src/**/*.html', 'src/**/*.js', 'src/**/*.less', 'src/**/*.css']
+				files: ['src/**/*.html', 'src/**/*.js', 'src/**/*.less', 'src/**/*.coffee', 'src/**/*.css']
 				tasks: ['clean', 'concurrent:transform', 'copy:build']
 
 		concurrent:
-			transform: ['copy:main', 'less']
+			transform: ['copy:main', 'coffee', 'less']
 
 		
 	grunt.loadNpmTasks name for name of pkg.devDependencies when name[0..5] is 'grunt-'
