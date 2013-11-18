@@ -15,6 +15,8 @@ jQuery, Angularjs, Twitter Bootstrap 3, Font-Awesome e Underscore.js
 ### Como usar
   
   npm i
+  npm i -g bower
+  bower install
 
 ### Local (arquivos abertos)
   

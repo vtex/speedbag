@@ -9,3 +9,4 @@ tmp-deploy/
 .tmp/
 .DS_Store
 dist
+src/libs/
