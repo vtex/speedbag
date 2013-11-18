@@ -53,6 +53,7 @@ module.exports = (grunt) ->
 				options:
 					port: 9001
 					base: 'build/'
+					livereload: true
 
 		remote: main: {}
 
