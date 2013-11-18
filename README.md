@@ -3,20 +3,22 @@
 ## Grunt
 Less, Coffee, Livereload, Concat, Uglify, Cssmin, Local server e Proxy
 
-## Projeto
+## Bower
 jQuery, Angularjs, Twitter Bootstrap 3, Font-Awesome e Underscore.js
 
 [Leandro Oriente](http://leandrooriente.com/) - [Projeto Original](https://github.com/vtex/speedbag)
 
 ### Dependências
 
-  Grunt, Node
+  Grunt, Node, Bower
 
 ### Como usar
   
   npm i
+
   npm i -g bower
-  bower install
+
+  bower i
 
 ### Local (arquivos abertos)
   
