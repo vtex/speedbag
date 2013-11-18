@@ -48,16 +48,6 @@ module.exports = (grunt) ->
 		usemin:
 			html: 'build-raw/index.html'
 
-		'string-replace':
-			dist:
-				files:
-					'build-raw/index.html': ['build-raw/index.html']
-				options:
-					replacements: [
-						pattern: '<script src="http://localhost:35729/livereload.js"></script>'
-						replacement: ''
-					]
-
 		connect:
 			main:
 				options:
@@ -82,6 +72,6 @@ module.exports = (grunt) ->
 
 	grunt.registerTask 'default', ['clean', 'concurrent:transform', 'copy:build', 'server', 'watch']
 	grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin'] # minifies files
-	grunt.registerTask 'dist', ['clean', 'concurrent:transform', 'min', 'string-replace:dist', 'copy:build'] # Dist - minifies files
+	grunt.registerTask 'dist', ['clean', 'concurrent:transform', 'min', 'copy:build'] # Dist - minifies files
 	grunt.registerTask 'server', ['connect', 'remote']
 	grunt.registerTask 'distLocal', ['dist', 'server', 'watch']
