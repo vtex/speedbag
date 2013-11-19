@@ -35,10 +35,21 @@ module.exports = (grunt) ->
           ext: '.js'
 	      ]
 
+	  autoprefixer: 
+      options:
+        browsers: ['last 1 version']
+      dist:
+        files: [
+          expand: true,
+          cwd: 'build-raw/styles/',
+          src: '{,*/}*.css',
+          dest: 'build-raw/styles/'
+        ]
+
 		less:
 			main:
 				files:
-					'build-raw/style/main.css': 'src/style/main.less'
+					'build-raw/styles/main.css': 'src/styles/main.less'
 
 		useminPrepare:
 			html: 'build-raw/index.html'
@@ -47,6 +58,12 @@ module.exports = (grunt) ->
 
 		usemin:
 			html: 'build-raw/index.html'
+
+		cssmin:
+			default:
+				options:
+					keepSpecialComments: 0,
+					report: 'gzip'
 
 		imagemin:
       dist:
@@ -81,6 +98,6 @@ module.exports = (grunt) ->
 
 	grunt.registerTask 'default', ['clean', 'concurrent:transform', 'copy:build', 'server', 'watch']
 	grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin', 'imagemin'] # minifies files
-	grunt.registerTask 'dist', ['clean', 'concurrent:transform', 'min', 'copy:build'] # Dist - minifies files
+	grunt.registerTask 'dist', ['clean', 'concurrent:transform', 'autoprefixer', 'min', 'copy:build'] # Dist - minifies files
 	grunt.registerTask 'server', ['connect', 'remote']
 	grunt.registerTask 'distLocal', ['dist', 'server', 'watch']
