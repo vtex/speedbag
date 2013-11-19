@@ -81,6 +81,15 @@ module.exports = (grunt) ->
 					base: 'build/'
 					livereload: true
 
+		compress:
+		  main:
+		    expand: true,
+		    cwd: 'build-raw/',
+		    src: ['index.html', 'styles/**/*.*', 'scripts/**/*.*', 'images/**/*.*'],
+		    dest: 'build-raw/'
+		    options:
+		      mode: 'gzip'
+
 		remote: main: {}
 
 		watch:
@@ -98,6 +107,6 @@ module.exports = (grunt) ->
 
 	grunt.registerTask 'default', ['clean', 'concurrent:transform', 'copy:build', 'server', 'watch']
 	grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin', 'imagemin'] # minifies files
-	grunt.registerTask 'dist', ['clean', 'concurrent:transform', 'autoprefixer', 'min', 'copy:build'] # Dist - minifies files
+	grunt.registerTask 'dist', ['clean', 'concurrent:transform', 'autoprefixer', 'min', 'compress', 'copy:build'] # Dist - minifies files
 	grunt.registerTask 'server', ['connect', 'remote']
 	grunt.registerTask 'distLocal', ['dist', 'server', 'watch']
