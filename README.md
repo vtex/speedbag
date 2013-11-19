@@ -1,7 +1,7 @@
 # Tiny Speedbag
 
 ## Grunt
-Less, Coffee, Livereload, Concat, Uglify, Cssmin, Local server e Proxy
+Less, Coffee, Livereload, Concat, Uglify, Cssmin, Imagemin, Local server e Proxy
 
 ## Bower
 jQuery, Angularjs, Twitter Bootstrap 3, Font-Awesome e Underscore.js
