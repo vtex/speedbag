@@ -48,6 +48,15 @@ module.exports = (grunt) ->
 		usemin:
 			html: 'build-raw/index.html'
 
+		imagemin:
+      dist:
+        files: [
+          expand: true,
+          cwd: 'build-raw/images',
+          src: '{,*/}*.{gif,jpeg,jpg,png}',
+          dest: 'build-raw/images'
+        ]
+
 		connect:
 			main:
 				options:
@@ -71,7 +80,7 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks name for name of pkg.devDependencies when name[0..5] is 'grunt-'
 
 	grunt.registerTask 'default', ['clean', 'concurrent:transform', 'copy:build', 'server', 'watch']
-	grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin'] # minifies files
+	grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin', 'imagemin'] # minifies files
 	grunt.registerTask 'dist', ['clean', 'concurrent:transform', 'min', 'copy:build'] # Dist - minifies files
 	grunt.registerTask 'server', ['connect', 'remote']
 	grunt.registerTask 'distLocal', ['dist', 'server', 'watch']
