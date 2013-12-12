@@ -6,3 +6,7 @@ node_modules/
 bower_components/
 npm-debug.log
 tmp-deploy/
+.tmp/
+.DS_Store
+dist
+src/libs/

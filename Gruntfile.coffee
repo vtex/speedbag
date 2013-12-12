@@ -1,32 +1,23 @@
 module.exports = (grunt) ->
 	pkg = grunt.file.readJSON('package.json')
 
-	replacements =
-		dev:
-			'//VTEX_IO_HOST/VERSION_DIRECTORY': ''
-			'VERSION_NUMBER': pkg.version
-		dist:
-			'VTEX_IO_HOST': 'io.vtex.com.br'
-			'VERSION_NUMBER': pkg.version
-
 	# Project configuration.
 	grunt.initConfig
-		relativePath: ''
 
 		# Tasks
 		clean: 
-			main: ['build', 'build-raw', 'tmp-deploy']
+			main: ['build', 'build-raw', '.tmp']
 
 		copy:
 			main:
 				files: [
 					expand: true
 					cwd: 'src/'
-					src: ['**', '!coffee/**', '!**/*.less']
-					dest: 'build-raw/<%= relativePath %>'
+					src: ['**', '!**/*.less', '!**/*.coffee']
+					dest: 'build-raw/'
 				,
 					src: ['src/index.html']
-					dest: 'build-raw/<%= relativePath %>/index.debug.html'
+					dest: 'build-raw/index.debug.html'
 				]
 			build:
 				expand: true
@@ -35,67 +26,69 @@ module.exports = (grunt) ->
 				dest: 'build/'
 
 		coffee:
-			main:
-				files: [
-					expand: true
-					cwd: 'src/coffee'
-					src: ['**/*.coffee']
-					dest: 'build-raw/<%= relativePath %>/js/'
-					ext: '.js'
-				]
+      main:
+	      files: [
+          expand: true
+          cwd: 'src/coffee'
+          src: ['**/*.coffee']
+          dest: 'build-raw/scripts/'
+          ext: '.js'
+	      ]
+
+	  autoprefixer: 
+      options:
+        browsers: ['last 1 version']
+      dist:
+        files: [
+          expand: true,
+          cwd: 'build-raw/styles/',
+          src: '{,*/}*.css',
+          dest: 'build-raw/styles/'
+        ]
 
 		less:
 			main:
 				files:
-					'build-raw/<%= relativePath %>/style/main.css': 'src/style/main.less'
+					'build-raw/styles/main.css': 'src/styles/main.less'
 
 		useminPrepare:
-			html: 'build-raw/<%= relativePath %>/index.html'
+			html: 'build-raw/index.html'
+			options:
+        dest: 'build-raw/'
 
 		usemin:
-			html: 'build-raw/<%= relativePath %>/index.html'
-			options: {script: true, css: true, image: false, require: false, datatags: false, background: false, anchors: false, input: false}
+			html: 'build-raw/index.html'
 
-		### example - we actually use grunt-usemin to min. check index.html for the build tags
-		uglify:
-  		options:
-  			mangle: false
-			dist:
-				files:
-					'dist/people.min.js': ['dist/people.js']
-		###
-
-		karma:
-			options:
-				configFile: 'karma.conf.coffee'
-			unit:
-				background: true
-			single:
-				singleRun: true
-
-		'string-replace':
-			dev:
-				files:
-					'build/<%= relativePath %>/index.html': ['build-raw/<%= relativePath %>/index.html']
-					'build/<%= relativePath %>/index.debug.html': ['build-raw/<%= relativePath %>/index.debug.html']
-					'build/<%= relativePath %>/js/app.js': ['build-raw/<%= relativePath %>/js/app.js']
-					'build/<%= relativePath %>/js/main.js': ['build-raw/<%= relativePath %>/js/main.js']
+		cssmin:
+			default:
 				options:
-					replacements: ({'pattern': new RegExp(key, "g"), 'replacement': value} for key, value of replacements.dev)
-			dist:
-				files:
-					'build/<%= relativePath %>/index.html': ['build-raw/<%= relativePath %>/index.html']
-					'build/<%= relativePath %>/index.debug.html': ['build-raw/<%= relativePath %>/index.debug.html']
-					'build/<%= relativePath %>/js/app.js': ['build-raw/<%= relativePath %>/js/app.js']
-					'build/<%= relativePath %>/js/main.js': ['build-raw/<%= relativePath %>/js/main.js']
-				options:
-					replacements: ({'pattern': new RegExp(key, "g"), 'replacement': value} for key, value of replacements.dist)
+					keepSpecialComments: 0,
+					report: 'gzip'
+
+		imagemin:
+      dist:
+        files: [
+          expand: true,
+          cwd: 'build-raw/images',
+          src: '{,*/}*.{gif,jpeg,jpg,png}',
+          dest: 'build-raw/images'
+        ]
 
 		connect:
 			main:
 				options:
 					port: 9001
 					base: 'build/'
+					livereload: true
+
+		compress:
+		  main:
+		    expand: true,
+		    cwd: 'build-raw/',
+		    src: ['index.html', 'styles/**/*.*', 'scripts/**/*.*', 'images/**/*.*'],
+		    dest: 'build-raw/'
+		    options:
+		      mode: 'gzip'
 
 		remote: main: {}
 
@@ -103,37 +96,17 @@ module.exports = (grunt) ->
 			dev:
 				options:
 					livereload: true
-				files: ['src/**/*.html', 'src/**/*.coffee', 'spec/**/*.coffee', 'src/**/*.js', 'src/**/*.less', 'src/**/*.css']
-				tasks: ['clean', 'concurrent:transform', 'copy:build', 'string-replace:dev', 'karma:unit:run']
+				files: ['src/**/*.html', 'src/**/*.js', 'src/**/*.less', 'src/**/*.coffee', 'src/**/*.css', '!src/libs/**/*.*']
+				tasks: ['clean', 'concurrent:transform', 'copy:build']
 
 		concurrent:
 			transform: ['copy:main', 'coffee', 'less']
 
-		vtex_deploy:
-			main:
-				options:
-					buildDirectory: 'build/<%= relativePath %>'
-					indexPath: 'build/index.html'
-					whoamiPath: 'whoami'
-					includeHostname:
-						hostname: 'io.vtex.com.br'
-						files: ["build/index.html", "build/index.debug.html", "build/js/app.js", "build/js/main.js"]
-			walmart:
-				options:
-					buildDirectory: 'build-raw/<%= relativePath %>'
-					indexPath: 'build-raw/index.html'
-					indexOnRoot: true
-					bucket: 'vtex-io-walmart'
-					requireEnvironmentType: 'stable'
-					includeHostname:
-						hostname: 'VTEX_IO_HOST'
-						files: ["build-raw/index.html", "build-raw/index.debug.html", "build-raw/js/app.js", "build-raw/js/main.js"]
-
+		
 	grunt.loadNpmTasks name for name of pkg.devDependencies when name[0..5] is 'grunt-'
 
-	grunt.registerTask 'default', ['clean', 'concurrent:transform', 'copy:build', 'string-replace:dev', 'server', 'karma:unit', 'watch']
-	grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin'] # minifies files
-	grunt.registerTask 'devmin', ['clean', 'concurrent:transform', 'min', 'copy:build', 'string-replace:dev', 'server', 'watch'] # Dev - minifies files
-	grunt.registerTask 'dist', ['clean', 'concurrent:transform', 'min', 'copy:build', 'string-replace:dist'] # Dist - minifies files
-	grunt.registerTask 'test', ['karma:single']
+	grunt.registerTask 'default', ['clean', 'concurrent:transform', 'copy:build', 'server', 'watch']
+	grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin', 'imagemin'] # minifies files
+	grunt.registerTask 'dist', ['clean', 'concurrent:transform', 'autoprefixer', 'min', 'compress', 'copy:build'] # Dist - minifies files
 	grunt.registerTask 'server', ['connect', 'remote']
+	grunt.registerTask 'distLocal', ['dist', 'server', 'watch']

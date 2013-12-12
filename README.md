@@ -1,50 +1,39 @@
-# Speedbag
+# Tiny Speedbag
 
-A grunt coffee/less/live-reload/cssmin/uglify/connect/bootstrap/zepto/lodash boilerplate.
+## Grunt
+Less, Coffee, Livereload, Concat, Uglify, Cssmin, Imagemin, Local server e Proxy
 
-Check out the [live demo](http://vtex.github.io/speedbag)
+## Bower
+jQuery, Angularjs, Twitter Bootstrap 3, Font-Awesome e Underscore.js
 
-Requires [node](http://nodejs.org/), [grunt](http://gruntjs.com/), bower and bower-installer (`[sudo] npm i -g grunt-cli bower bower-installer`).
+[Leandro Oriente](http://leandrooriente.com/) - [Projeto Original](https://github.com/vtex/speedbag)
 
-### Speedstart
+### Dependências
 
-    npm i
-    bower-installer
-    grunt
+  Grunt, Node, Bower
 
-Have fun! Changes to your coffee, less or html files will reload the page automatically. Nice.
+### Como usar
+  
+  npm i
 
-The compiled files can be found in the `/build` folder.
+  npm i -g bower
 
-### Testing
+  bower i
 
-    grunt test
+### Local (arquivos abertos)
+  
+  grunt
 
-### Distributable build (minifies, etc.)
+### Build (arquivos minificados e concatenados)
+  
+  grunt dist
 
-    grunt dist
+### Testar build local
+  
+  grunt distLocal
 
-### Folder structure
+## Problemas comuns
 
-- `src` - most of your files will be here.
-	- `coffee` - CoffeeScript source files
-	- `style` - CSS and LESS source files
-	- `lib` - Third-party libs
-	- `index.html` - Your app entry point.
-- `spec` - Unit tests source files.
-- `Gruntfile.coffee` - This is the configuration file for grunt. Contains all the build tasks.
-- `remote.json` - The configuration file for [Remote](https://github.com/gadr90/remote), if you need it.
-- `build` - this folder will be created after you run a grunt task.
-	- `index.debug.html` - this is the same index as generated on the dev task. Useful for debugging in production.
-- `build-raw` - this folder contains your built app before any string-replacements.
+- Caso deseje rodar o proxy e/ou o server numa porta inferior a 1024 (80 por exemplo) é necessário rodar o grunt como root (sudo).
 
-------
-
-### Common issues:
-
-**EADDRINUSE** - Someone is already using one of the ports used by this app, either [connect](https://github.com/gruntjs/grunt-contrib-connect)'s 9001 or [LiveReload](https://github.com/gruntjs/grunt-contrib-livereload)'s 35729.
-Shut down interfering services or change the ports on Gruntfile.coffee.
-
-------
-
-VTEX - 2013
+- Se quiser usar um domínio customizado no remote, é necessário adicionar ao arquivo de host apontando para localhost.
