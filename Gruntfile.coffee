@@ -108,6 +108,9 @@ module.exports = (grunt) ->
       main:
         files: ['src/i18n/**/*.json', 'src/index.html']
         tasks: ['copy']
+      test:
+        files: ['src/coffee/**/*.coffee', 'spec/**/*.coffee']
+        tasks: ['karma:unit:run']
 
     vtex_deploy:
       main:
@@ -125,8 +128,9 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks name for name of pkg.devDependencies when name[0..5] is 'grunt-'
 
   grunt.registerTask 'default', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'server', 'watch']
+  grunt.registerTask 'tdd', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'karma:unit', 'server', 'watch']
   grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'usemin'] # minifies files
   grunt.registerTask 'dist', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'min'] # Dist - minifies files
   grunt.registerTask 'devmin', ['dist', 'configureProxies:server', 'connect:server:keepalive'] # Minifies files and serve
-  grunt.registerTask 'test', []
+  grunt.registerTask 'test', ['karma:single']
   grunt.registerTask 'server', ['configureProxies:server', 'connect']
