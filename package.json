@@ -1,6 +1,6 @@
 {
   "name": "speedbag",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "readmeFilename": "README.md",
   "description": "A grunt coffee/less/live-reload/cssmin/uglify/connect/angular/bootstrap/jquery/underscore boilerplate.",
   "main": "index.html",
@@ -30,7 +30,6 @@
     "grunt-vtex-deploy": "~0.20.3",
     "grunt-angular-templates": "~0.4.1",
     "grunt-connect-proxy": "~0.1.7",
-    "grunt-karma": "~0.7.2",
     "karma": "~0.11.0",
     "karma-jasmine": "~0.1.5",
     "karma-phantomjs-launcher": "~0.1.1",
