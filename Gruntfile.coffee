@@ -79,6 +79,7 @@ module.exports = (grunt) ->
       server:
         options:
           livereload: true
+          open: 'http://localhost:80/<%= relativePath %>/'
           hostname: "*"
           port: 80
           middleware: (connect, options) ->
@@ -91,10 +92,6 @@ module.exports = (grunt) ->
             "X-VTEX-Router-Backend-EnvironmentType": "beta"
           }
         ]
-
-    open:
-      dev:
-        path: 'http://localhost:80/<%= relativePath %>/'
 
     watch:
       options:
@@ -131,8 +128,8 @@ module.exports = (grunt) ->
 
   grunt.loadNpmTasks name for name of pkg.devDependencies when name[0..5] is 'grunt-'
 
-  grunt.registerTask 'default', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'server', 'open:dev', 'watch']
-  grunt.registerTask 'tdd', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'karma:unit', 'server', 'open:dev', 'watch']
+  grunt.registerTask 'default', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'server', 'watch']
+  grunt.registerTask 'tdd', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'karma:unit', 'server', 'watch']
   grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'usemin'] # minifies files
   grunt.registerTask 'dist', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'min'] # Dist - minifies files
   grunt.registerTask 'devmin', ['dist', 'configureProxies:server', 'connect:server:keepalive'] # Minifies files and serve
