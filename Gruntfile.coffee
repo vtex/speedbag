@@ -14,7 +14,7 @@ module.exports = (grunt) ->
         files: [
           expand: true
           cwd: 'src/'
-          src: ['**', '!coffee/**', '!**/*.less']
+          src: ['**', '!coffee/**', '!style/**', '!views/**']
           dest: 'build/<%= relativePath %>/'
         ,
           src: ['package.json']
@@ -92,6 +92,10 @@ module.exports = (grunt) ->
           }
         ]
 
+    open:
+      dev:
+        path: 'http://localhost:80/<%= relativePath %>/'
+
     watch:
       options:
         livereload: true
@@ -127,8 +131,8 @@ module.exports = (grunt) ->
 
   grunt.loadNpmTasks name for name of pkg.devDependencies when name[0..5] is 'grunt-'
 
-  grunt.registerTask 'default', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'server', 'watch']
-  grunt.registerTask 'tdd', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'karma:unit', 'server', 'watch']
+  grunt.registerTask 'default', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'server', 'open:dev', 'watch']
+  grunt.registerTask 'tdd', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'karma:unit', 'server', 'open:dev', 'watch']
   grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'usemin'] # minifies files
   grunt.registerTask 'dist', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'min'] # Dist - minifies files
   grunt.registerTask 'devmin', ['dist', 'configureProxies:server', 'connect:server:keepalive'] # Minifies files and serve
