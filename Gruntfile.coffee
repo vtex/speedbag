@@ -112,7 +112,7 @@ module.exports = (grunt) ->
       test:
         files: ['src/coffee/**/*.coffee', 'spec/**/*.coffee']
         tasks: ['karma:unit:run']
-
+   
     vtex_deploy:
       main:
         cwd: "build/<%= relativePath %>"
@@ -126,7 +126,9 @@ module.exports = (grunt) ->
 
           files: ["index.html", "<%= relativePath %>/index.html"]
 
+
   grunt.loadNpmTasks name for name of pkg.devDependencies when name[0..5] is 'grunt-'
+  grunt.loadTasks('tasks');
 
   grunt.registerTask 'default', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'server', 'watch']
   grunt.registerTask 'tdd', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'karma:unit', 'server', 'watch']
@@ -135,3 +137,4 @@ module.exports = (grunt) ->
   grunt.registerTask 'devmin', ['dist', 'configureProxies:server', 'connect:server:keepalive'] # Minifies files and serve
   grunt.registerTask 'test', ['karma:single']
   grunt.registerTask 'server', ['configureProxies:server', 'connect']
+

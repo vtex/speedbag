@@ -30,11 +30,13 @@
     "grunt-vtex-deploy": "~0.20.3",
     "grunt-angular-templates": "~0.4.1",
     "grunt-connect-proxy": "~0.1.7",
+    "grunt grunt-http": "~1.0.1",
     "karma": "~0.11.0",
     "karma-jasmine": "~0.1.5",
     "karma-phantomjs-launcher": "~0.1.1",
     "karma-chrome-launcher": "~0.1.0",
-    "karma-coffee-preprocessor": "~0.1.2"
+    "karma-coffee-preprocessor": "~0.1.2",
+    "grunt-http": "~1.0.1"
   },
   "repository": {
     "type": "git",
