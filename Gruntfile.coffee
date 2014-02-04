@@ -79,7 +79,7 @@ module.exports = (grunt) ->
       server:
         options:
           livereload: true
-          open: 'http://localhost:80/<%= relativePath %>/'
+          #open: 'http://localhost:80/<%= relativePath %>/'
           hostname: "*"
           port: 80
           middleware: (connect, options) ->
