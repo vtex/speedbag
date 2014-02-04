@@ -18,7 +18,14 @@
 
         public async Task SaveAsync(string path, string content)
         {
-            await this.s3.PutTextAsync(path, content);
+            try
+            {
+                await this.s3.PutTextAsync(path, content);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Erro ao salvar arquivo no S3");
+            }
         }
 
         public async Task<bool> DeleteAsync(string path)

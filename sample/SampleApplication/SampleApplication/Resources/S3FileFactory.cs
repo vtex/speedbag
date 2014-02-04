@@ -1,9 +1,5 @@
 ﻿namespace SampleApplication.Resources
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Web;
     using Vtex.Practices.Aws.S3;
 
     public class S3FileFactory

@@ -1,5 +1,6 @@
 ﻿namespace SampleApplication.Controllers
 {
+    using Amazon;
     using SampleApplication.Resources;
     using System;
     using System.Net;
@@ -15,7 +16,7 @@
 
         public PersistenceController()
         {
-            var s3Adapter = new LocalFilesystemS3Adapter(HttpContext.Current.Server.MapPath("~/s3tests"));
+            var s3Adapter = CreateS3Adapter();
             this.resourceFactory = new S3FileFactory(s3Adapter);
         }
 
@@ -43,6 +44,11 @@
         public string GetFile(string path)
         {
             throw new NotImplementedException();
+        }
+
+        private IAmazonS3Adapter CreateS3Adapter()
+        {
+
         }
     }
 }
