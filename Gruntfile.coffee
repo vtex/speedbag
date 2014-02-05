@@ -128,7 +128,7 @@ module.exports = (grunt) ->
 
 
   grunt.loadNpmTasks name for name of pkg.devDependencies when name[0..5] is 'grunt-'
-  grunt.loadTasks('tasks');
+  grunt.loadTasks 'tasks'
 
   grunt.registerTask 'default', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'server', 'watch']
   grunt.registerTask 'tdd', ['clean', 'copy', 'coffee', 'less', 'ngtemplates', 'karma:unit', 'server', 'watch']
