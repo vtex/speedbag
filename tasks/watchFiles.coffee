@@ -13,24 +13,23 @@ module.exports = (grunt) ->
 	onChange = grunt.util._.debounce(->
 	  Object.keys(changedFiles).forEach (file) ->
 		  action = changedFiles[file]
-		  fileName = "speedbag\/"+file.replace /\\/g,"\/"
 		  if action is "deleted"
 		  	 request.del {
 		  	 	uri: "http://basedevmkp.vtexlocal.com.br:81/api/persistence/",
 		  	 	json: {
-		  	 		FilePath: fileName
+		  	 		FilePath: file
 		  	 	}
 		  	 }, (error, response, body) ->
 		  	 	if response.statusCode is 204 then console.log 'file deleted'
 		  	 	else
 		  	 		grunt.log.warn 'Error ' + response.statusCode
 
-		  if action in ['added', 'created', 'renamed', 'changed']
+		  if action in ['added', 'created', 'renamed', 'changed', 'saved']
 			  fileContent = cat file
 			  request.put {
 			  		uri: "http://basedevmkp.vtexlocal.com.br:81/api/persistence/",
 					json: {
-						FilePath: fileName,
+						FilePath: file,
 						Content: fileContent
 						}
 					}, (error, response, body) ->

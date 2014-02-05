@@ -9,12 +9,18 @@ module.exports = (grunt) ->
 		for src in sources
 			files = grunt.file.expand src
 			for file in files
-				content = grunt.file.read file;
+				content = grunt.file.read file
 				sendHttpRequest(file, content)
 
 	sendHttpRequest = (path, content) ->
-	  fileName = "speedbag\/"+path.replace /\\/g,"\/"
-	  console.log path
+		request.put {
+			uri: "http://basedevmkp.vtexlocal.com.br:81/api/persistence/",
+			json: {
+				FilePath: path,
+				Content: content
+			}
+		}, (error, response, body) ->
+			if response.statusCode is 200 then console.log 'sync file: ' + path
 
 	grunt.registerTask 'syncfiles', ->
 		paths = getFilesFromWatch()
