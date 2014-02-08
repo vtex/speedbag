@@ -31,7 +31,7 @@
         public async Task<bool> DeleteAsync(string path)
         {
             try
-            {
+            {   
                 await this.s3.DeleteFileAsync(path);
                 return true;
             }
@@ -40,6 +40,11 @@
                 // ok, está apagado
             }
             return false;
+        }
+
+        internal async Task<IEnumerable<string>> GetAllAsync(string path)
+        {
+            return await this.s3.ListFilesAsync(path);
         }
     }
 }

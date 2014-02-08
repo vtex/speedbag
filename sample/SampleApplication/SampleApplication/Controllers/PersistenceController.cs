@@ -3,6 +3,7 @@
     using Amazon;
     using SampleApplication.Resources;
     using System;
+    using System.Collections;
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -35,6 +36,12 @@
         {
             var fileStorage = this.resourceFactory.CreateFileStorage();
 
+            var files = await fileStorage.GetAllAsync(request.FilePath);
+            foreach (string path in files)
+            {
+                await fileStorage.DeleteAsync(path);
+            }
+            
             return await fileStorage.DeleteAsync(request.FilePath)
                 ? this.Request.CreateResponse(HttpStatusCode.NoContent)
                 : this.Request.CreateResponse(HttpStatusCode.NotFound);
@@ -48,7 +55,7 @@
 
         private IAmazonS3Adapter CreateS3Adapter()
         {
-
         }
+
     }
 }
