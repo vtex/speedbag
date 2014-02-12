@@ -1,79 +1,47 @@
-request = require 'request'
 require 'shelljs/global'
+request = require 'request'
 watch = require 'watch'
+_ = require 'lodash'
+util = require './lib/util'
 
 module.exports = (grunt) ->
-	
-	watchFiles = () ->
-		watch.createMonitor 'src', (monitor) ->
-			monitor.on 'created', (file, stat) ->
-				if grunt.file.isFile file
-					console.log "eh um arquivo"
-					content = cat file
-					putHttpRequest file, content
-				if grunt.file.isDir file
-					console.log "eh um diretorio"
-					grunt.file.recurse file, (abspath, rootdir, subdir, filename) ->
-						if grunt.file.isFile abspath
-							content = cat abspath
-							putHttpRequest abspath , content 
+	changedFiles = Object.create null
 
-			monitor.on 'removed', (file, stat) ->
-				filePath = file.replace /\\/g,"\/"
-				request.del {
-					uri: "http://basedevmkp.vtexlocal.com.br:81/api/persistence/",
-					json: {
-						FilePath: filePath
-		  	 	}
-		  	 }, (error, response, body) ->
-		  	 	if response.statusCode is 204 then console.log 'file '+filePath+' deleted'
-		  	 	else grunt.log.warn 'Error ' + response.statusCode
-
-			monitor.on 'changed', (file, curr, prev) ->
-				content = cat file
-				putHttpRequest file, content
-
-	getFilesFromWatch = () ->
-		files = JSON.stringify grunt.config.get 'watch'
-		files.match /"files":\[(.*?)\]/g
-
-	readContentFromFile = (sources) ->
-		for src in sources
-			files = grunt.file.expand src
-			for file in files
-				if grunt.file.isFile file
-					content = grunt.file.read file
-					putHttpRequest(file, content)
-
-	putHttpRequest = (file, content) ->
-		filePath = file.replace /\\/g,"\/"
+	onChange = _.debounce((changedFiles) ->
+		requestMessage = createRequestMessage changedFiles
 		request.put {
 			uri: "http://basedevmkp.vtexlocal.com.br:81/api/persistence/",
-			json: {
-				FilePath: filePath,
-				Content: content
-			}
 		}, (error, response, body) ->
-			if response.statusCode is 200 then console.log 'sync file: ' + filePath
+			cleanChangedFiles()
+	, 200)
+	
+	syncFilesToS3 = () ->
+		changedFiles['src'] = 'removed'
+		onChange changedFiles
 
-	deleteHttpRequest = () ->
-		console.log "delete"
-		request.del {
-			uri: "http://basedevmkp.vtexlocal.com.br:81/api/persistence/",
-			json: {
-				FilePath: 'src/'
-			}
-		}, (error, response, body) ->
-			if response.statusCode is 204
-				console.log "Status code 204"
-				paths = getFilesFromWatch()
-				for path in paths
-					sources = path.match /src(.*?)(?=")/g
-					readContentFromFile sources
+	watchFiles = () ->
+		watch.createMonitor 'src', (monitor) ->
+			monitor.on 'created', (filePath) ->
+				changedFiles[filePath] = 'created'
+				onChange changedFiles
+
+			monitor.on 'removed', (filePath) ->
+				changedFiles[filePath] = 'removed'
+				onChange changedFiles
+
+			monitor.on 'changed', (filePath) ->
+				changedFiles[filePath] = 'changed'
+				onChange changedFiles
+
+	createRequestMessage = (changedFiles) ->	
+		messages = []
+		for path in Object.keys changedFiles
+			messages.push util.createJsonMessage path, changedFiles
+		return messages
+
+	cleanChangedFiles = () ->
+		changedFiles = Object.create null
 
 	grunt.registerTask 'syncfiles', ->
-		deleteHttpRequest()
+		syncFilesToS3()
 		watchFiles()
-
-
-	
