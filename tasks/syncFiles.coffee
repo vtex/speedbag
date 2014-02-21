@@ -23,7 +23,6 @@ module.exports = (grunt) ->
 			if response.statusCode isnt 200
 				return deferred.reject("Invalid status code #{response.statusCode}")
 			try
-				console.log "ASS"
 				cleanChangedFiles()
 				deferred.resolve()
 			catch e
@@ -34,11 +33,15 @@ module.exports = (grunt) ->
 		return deferred.promise
 
 	syncFilesToS3 = (root) ->
+		deferred = Q.defer()
 		for file in grunt.file.expand root
 			if grunt.file.isFile file
 				console.log "sync " + file
 				changedFiles[file] = 'created'
 				onChange(changedFiles)
+
+		deferred.resolve()
+		return deferred.promise
 
 	watchFiles = ->
 		watch.createMonitor 'src', (monitor) ->
@@ -94,14 +97,19 @@ module.exports = (grunt) ->
 		done = this.async()
 		grunt.config.requires 'sync.root'
 
-		root = grunt.config 'sync.root'
 		changedFiles["src/"] = 'removed'
 
-		authPromise = athentication()
+		credentials = util.getCredentials()
+		done(new Error("Authentication failed. Call \'grunt login\'")) if credentials is null
 
-		authPromise.then( -> onChange(changedFiles))
-		.then  (onChangeReturn) ->
-			done()
+		clearBucketPromise = onChange(changedFiles)
+
+		clearBucketPromise.then (onChangeReturn) ->
+			root = grunt.config 'sync.root'
+			syncPromise = syncFilesToS3 root
+			syncPromise.then (syncReturn) ->
+				watchFiles()
+				done()
 
 		.fail (reason) ->
 			done(new Error("Something went wrong. " + reason)) if reason isnt 'Success'
@@ -109,14 +117,14 @@ module.exports = (grunt) ->
 	grunt.registerTask 'workspace', ->
 		done = this.async()
 		credentials = util.getCredentials()
-		
+
 		done(new Error("Authentication failed. Call \'grunt login\'")) if credentials is null
 
 		requestOptions =
 			url: "http://basedevmkp.vtexlocal.com.br:81/api/workspace/"
 
 		requestCallBack = (error, response, body) ->
-			if response.statusCode isnt 200 then done(false)
+			if response.statusCode isnt 200 then done(new Error(body))
 
 			json = JSON.parse body
 			for file in json
@@ -129,7 +137,7 @@ module.exports = (grunt) ->
 	grunt.registerTask 'login', ->
 		done = this.async()
 		authPromise = athentication()
-		
+
 		authPromise.then (response) ->
 			msg = "Authentication: \'#{response.authStatus}\'"
 			try
