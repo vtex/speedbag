@@ -1,8 +1,13 @@
 ﻿namespace SampleApplication.Resources
 {
+    using Amazon.S3.Model;
+    using SampleApplication.Controllers;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Net;
+    using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
     using Vtex.Practices.Aws.S3;
@@ -42,9 +47,36 @@
             return false;
         }
 
-        internal async Task<IEnumerable<string>> GetAllAsync(string path)
+        public async Task<IEnumerable<FileExchange>> GetAllAsync(string path)
+        {
+            List<FileExchange> workspaceFiles = new List<FileExchange>();
+
+            var paths = await this.s3.ListFilesAsync(path);
+            foreach(string filePath in paths)
+            {
+                var file = await this.GetFileAsync(filePath);
+               
+                StreamReader reader = new StreamReader(file);
+                String content = reader.ReadToEnd();
+                workspaceFiles.Add(FileExchange.FromFile(filePath, Base64Decode(content)));
+            }
+            return workspaceFiles;
+        }
+
+        internal async Task<IEnumerable<string>> GetAllPathsAsync(string path)
         {
             return await this.s3.ListFilesAsync(path);
+        }
+
+        internal async Task<Stream> GetFileAsync(string path)
+        {
+            return await this.s3.GetFileAsync(path);
+        }
+
+        private static string Base64Decode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
         }
     }
 }

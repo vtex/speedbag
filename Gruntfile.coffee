@@ -9,6 +9,9 @@ module.exports = (grunt) ->
     clean:
       main: ['build', 'tmp-deploy']
 
+    sync:
+      root: ['src/**']
+
     copy:
       main:
         files: [
