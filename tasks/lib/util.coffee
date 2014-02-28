@@ -1,5 +1,25 @@
 mime = require 'mime'
 require 'shelljs/global'
+mypath = require 'path'
+
+getPatternFrom = (key) -> 		
+	key = key.replace /\\/g, "\\\\"
+	return pattern = /// ^(#{key}\\) ///
+
+getOnlyDirectories = (changedFiles) ->
+	directories = {}
+	for key, value of changedFiles
+		if value is 'removed'
+			if mypath.extname(key) is ''
+				directories[key] = value
+	return directories
+
+exports.fileAlreadyAdded = (changedFiles, filePath) ->
+	directories = getOnlyDirectories changedFiles
+	for key , value of directories
+		pattern = getPatternFrom key
+		return true if pattern.test(filePath) is true
+	return false
 
 exports.getCredentials = ->
 	path = 'tasks/auth.json'

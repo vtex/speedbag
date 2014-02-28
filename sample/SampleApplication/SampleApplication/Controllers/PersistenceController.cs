@@ -3,7 +3,6 @@
     using Amazon;
     using SampleApplication.Resources;
     using System;
-    using System.Collections;
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -17,45 +16,69 @@
 
         public PersistenceController()
         {
-            var s3Adapter = CreateS3Adapter();
+            var s3Adapter = S3ConnectionFactory.GetS3Adapter;
             this.resourceFactory = new S3FileFactory(s3Adapter);
         }
 
         [HttpPut]
-        public async Task<HttpResponseMessage> Update(FileExchange request)
+        public async Task<HttpResponseMessage> Update(HttpRequestMessage request)
         {
-            request.IsValid();
-            var fileStorage = this.resourceFactory.CreateFileStorage();
-            await fileStorage.SaveAsync(request.FilePath, request.Content);
+            var content = request.Content;
+            var jsonContent = content.ReadAsAsync<FileExchange[]>().Result;
 
-            return this.Request.CreateResponse(HttpStatusCode.OK, FileExchange.FromFile(request.FilePath, request.Content));
+            var name = 0;
+            foreach (var element in jsonContent)
+            {
+                if (element.action.Equals("removed"))
+                {
+                    name++;
+                    await DeleteFile(element.path);
+                }
+
+                if (element.action.Equals("created"))
+                {
+                    name++;
+                    await ChangeFile(element.path, Base64Decode(element.content)).ConfigureAwait(false);
+                }
+
+                if (element.action.Equals("changed"))
+                {
+                    name++;
+                    await ChangeFile(element.path, Base64Decode(element.content)).ConfigureAwait(false);
+                }
+            }
+            return this.Request.CreateResponse(HttpStatusCode.OK, name);             
         }
 
-        [HttpDelete]
-        public async Task<HttpResponseMessage> DeleteFile(FileExchange request)
+        private async Task ChangeFile(string filePath, string content)
+        {
+            var fileStorage = this.resourceFactory.CreateFileStorage();
+            await fileStorage.SaveAsync(filePath, content);
+        }
+
+        public async Task DeleteFile(string filePath)
         {
             var fileStorage = this.resourceFactory.CreateFileStorage();
 
-            var files = await fileStorage.GetAllAsync(request.FilePath);
+            var files = await fileStorage.GetAllPathsAsync(filePath);
             foreach (string path in files)
             {
-                await fileStorage.DeleteAsync(path);
+               await fileStorage.DeleteAsync(path);  
             }
-            
-            return await fileStorage.DeleteAsync(request.FilePath)
-                ? this.Request.CreateResponse(HttpStatusCode.NoContent)
-                : this.Request.CreateResponse(HttpStatusCode.NotFound);
+
+            await fileStorage.DeleteAsync(filePath);
         }
 
         [HttpGet]
-        public string GetFile(string path)
+        public string GetFile(int path)
         {
-            throw new NotImplementedException();
+            return "get path funcionou";
         }
 
-        private IAmazonS3Adapter CreateS3Adapter()
+        public static string Base64Decode(string base64EncodedData)
         {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
-
     }
 }

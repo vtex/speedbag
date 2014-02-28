@@ -1,19 +1,22 @@
 require 'shelljs/global'
+
+Q = require 'q'
 auth = require './lib/auth'
 request = require 'request'
 util = require './lib/util'
 watch = require 'watch'
 load = require 'lodash'
-Q = require 'q'
+mypath = require 'path'
 
 module.exports = (grunt) ->
 	changedFiles = {}
 
 	onChange = (changedFiles) ->
 		deferred = Q.defer()
-		requestMessage = createRequestMessage changedFiles
+		console.log changedFiles
 
-		requestOptions = 
+		requestMessage = createRequestMessage changedFiles
+		requestOptions =
 			uri: "http://basedevmkp.vtexlocal.com.br:81/api/persistence/"
 			json: requestMessage
 			headers:
@@ -28,6 +31,7 @@ module.exports = (grunt) ->
 			catch e
 				deferred.reject()
 
+		console.log "faço uma request"
 		request.put requestOptions, requestCallBack
 
 		return deferred.promise
@@ -38,37 +42,46 @@ module.exports = (grunt) ->
 			if grunt.file.isFile file
 				console.log "sync " + file
 				changedFiles[file] = 'created'
-				onChange(changedFiles)
 
+		onChange(changedFiles)
 		deferred.resolve()
 		return deferred.promise
 
-	watchFiles = ->
+	watchFiles = () ->
 		watch.createMonitor 'src', (monitor) ->
 			monitor.on 'created', (filePath) ->
-				console.log "created " + filePath
-				addCreateFile(filePath)
+				console.log "created ", filePath
+				addCreatedFile filePath, 'created'
 				onChange changedFiles
 
 			monitor.on 'removed', (filePath) ->
-				console.log "removed " + filePath
-				changedFiles[filePath] = 'removed'
-				onChange changedFiles
-
+				console.log "removed ", filePath
+				addRemovedFile filePath, 'removed'
+		
 			monitor.on 'changed', (filePath) ->
-				console.log "changed " + filePath
+				console.log "changed", filePath
 				changedFiles[filePath] = 'changed'
 				onChange changedFiles
 
-	addCreateFile = (filePath) ->
+	addCreatedFile = (filePath, action) ->
 		if grunt.file.isFile filePath
-			changedFiles[filePath] = 'created'
+			changedFiles[filePath] = action
+		
 		if grunt.file.isDir filePath
 			grunt.file.recurse filePath, (abspath) ->
 				if grunt.file.isFile abspath
-					changedFiles[abspath] = 'created'
+					changedFiles[abspath] = action
 
-	createRequestMessage = (changedFiles) ->	
+	addRemovedFile = (filePath, action) ->
+		if mypath.extname(filePath) is ''
+			changedFiles[filePath] = action
+			onChange(changedFiles)
+		else
+			if util.fileAlreadyAdded(changedFiles, filePath) is false
+				changedFiles[filePath] = action
+				onChange(changedFiles)
+
+	createRequestMessage = (changedFiles) ->
 		messages = []
 		for path in Object.keys changedFiles
 			messages.push util.createJsonMessage path, changedFiles
@@ -87,10 +100,10 @@ module.exports = (grunt) ->
 
 		authPromise.then (success) ->
 			return deferred.resolve(success)
-			
+
 		authPromise.fail (reason) ->
 			return deferred.reject(reason)
-		
+
 		return deferred.promise
 
 	grunt.registerTask 'syncfiles', ->
@@ -108,7 +121,7 @@ module.exports = (grunt) ->
 			root = grunt.config 'sync.root'
 			syncPromise = syncFilesToS3 root
 			syncPromise.then (syncReturn) ->
-				watchFiles()
+				watchFiles('src/**')
 				done()
 
 		.fail (reason) ->

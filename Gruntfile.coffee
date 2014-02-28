@@ -10,7 +10,8 @@ module.exports = (grunt) ->
       main: ['build', 'tmp-deploy']
 
     sync:
-      root: ['src/**']
+      root: ['src/**/*']
+      ignore: ['src/**/*.swp']
 
     copy:
       main:
