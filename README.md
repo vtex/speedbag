@@ -1,8 +1,6 @@
-# Speedbag 2.0
+# Speedbag 3
 
 A grunt coffee/less/live-reload/cssmin/uglify/connect/angular/bootstrap/jquery/underscore boilerplate.
-
-Check out the [live demo](http://vtex.github.io/speedbag)
 
 Requires [node](http://nodejs.org/) and [grunt](http://gruntjs.com/).
 
