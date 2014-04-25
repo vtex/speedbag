@@ -18,13 +18,11 @@ Have fun! Changes to your coffee, less or html files will reload the page automa
 
 The compiled files can be found in the `/build` folder.
 
-### Testing
-
-    grunt test
-
 ### Distributable build (minifies, etc.)
 
     grunt dist
+
+The deploy-ready files can be found in the `/deploy` folder.
 
 ### Folder structure
 
@@ -32,7 +30,6 @@ The compiled files can be found in the `/build` folder.
 	- `coffee` - CoffeeScript source files
 	- `style` - CSS and LESS source files
 	- `index.html` - Your app entry point.
-- `spec` - Unit tests source files.
 - `Gruntfile.coffee` - This is the configuration file for grunt. Contains all the build tasks.
 - `build` - this folder will be created after you run a grunt task.
 
@@ -49,4 +46,4 @@ Shut down interfering services or change the ports on Gruntfile.coffee.
 
 ------
 
-VTEX - 2013
+VTEX - 2014

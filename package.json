@@ -8,11 +8,14 @@
     "/admin/speedbag"
   ],
   "hosts": [
-    "vtexcommerce.com.br",
-    "vtexcommercebeta.com.br",
-    "vtexlocal.com.br"
+    "*.vtexcommerce.com.br",
+    "*.vtexcommercebeta.com.br",
+    "*.vtexcommercestable.com.br",
+    "*.vtexcommercealfa.com.br",
+    "*.vtexlocal.com.br"
   ],
   "backend": "https://io.vtex.com.br/",
+  "deploy": "deploy/",
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-less": "~0.8.3",
@@ -26,15 +29,12 @@
     "grunt-contrib-uglify": "~0.2.2",
     "grunt-concurrent": "~0.4.2",
     "grunt-usemin": "~2.0.2",
-    "grunt-karma": "~0.7.2",
-    "grunt-vtex-deploy": "~0.20.3",
     "grunt-angular-templates": "~0.4.1",
     "grunt-connect-proxy": "~0.1.7",
-    "karma": "~0.11.0",
-    "karma-jasmine": "~0.1.5",
-    "karma-phantomjs-launcher": "~0.1.1",
-    "karma-chrome-launcher": "~0.1.0",
-    "karma-coffee-preprocessor": "~0.1.2"
+    "grunt-nginclude": "0.4.x",
+    "connect-mock": "~0.1.0",
+    "knox": "~0.8.9",
+    "deploy-s3": "~0.1.0"
   },
   "repository": {
     "type": "git",
