@@ -13,7 +13,7 @@ module.exports = (grunt) ->
   
     files: ["build/#{relativePath}/index.html", "build/#{relativePath}/#{relativePath}/index.html"]
 
-  transform.replace["/admin/#{pkg.name}/"] = "//io.vtex.com.br/#{pkg.name}/#{pkg.version}/"
+  transform.replace["/#{relativePath}/"] = "//io.vtex.com.br/#{pkg.name}/#{pkg.version}/"
 
   deploy = ->
     done = @async()
