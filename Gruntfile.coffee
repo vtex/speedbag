@@ -39,7 +39,7 @@ module.exports = (grunt) ->
         files: [
           expand: true
           cwd: 'src/'
-          src: ['**', '!coffee/**', '!style/**', '!views/**']
+          src: ['**', '!views/**', '!partials/**', '!coffee/**', '!**/*.less']
           dest: "build/#{relativePath}/"
         ,
           src: ['package.json']
@@ -80,7 +80,7 @@ module.exports = (grunt) ->
         files: [
           expand: true
           cwd: 'src/style'
-          src: ['main.less', 'print.less']
+          src: ['style.less', 'print.less']
           dest: "build/#{relativePath}/style/"
           ext: '.css'
         ]
