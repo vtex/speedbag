@@ -4,9 +4,9 @@ A grunt coffee/less/live-reload/cssmin/uglify/connect/angular/bootstrap/jquery/u
 
 Requires [node](http://nodejs.org/) and [grunt](http://gruntjs.com/).
 
-### Speedstart
+### Quickstart
 
-    npm i -g grunt-cli # dependencies
+    npm i -g grunt-cli releasy
 
     cd speedbag
     npm i
@@ -21,6 +21,13 @@ The compiled files can be found in the `/build` folder.
     grunt dist
 
 The deploy-ready files can be found in the `/deploy` folder.
+
+### Deploying
+
+    releasy
+
+[TeamCity](http://pachamama.vtexlab.com.br) should pick up your new tag and start a deploy.
+(For details, see [Releasy](https://github.com/vtex/releasy))
 
 ### Folder structure
 
