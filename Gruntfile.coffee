@@ -2,19 +2,31 @@ path = require 'path'
 knox = require 'knox'
 S3Deployer = require 'deploy-s3'
 fs = require 'fs'
+proxy = require 'grunt-connect-proxy/lib/utils'
+mock = require 'connect-mock'
+
 module.exports = (grunt) ->
   pkg = grunt.file.readJSON('package.json')
-
   relativePath = pkg.paths[0].slice(1)
-  transform =
-    replace:
-      "\<\!\-\- TOPBAR \-\-\>": '<script type="text/javascript" src="/admin-topbar/?loadKnockout=true&loadJquery=false&loadBootstrapCss=false&loadBootstrapResponsiveCss=false&loadBootstrapDropdown=false"></script>'
-      'window.versionDirectory = "";': "window.versionDirectory = '//io.vtex.com.br/#{pkg.name}/#{pkg.version}/';"
-  
-    files: ["build/#{relativePath}/index.html", "build/#{relativePath}/#{relativePath}/index.html"]
+  deployPath = path.join pkg.deploy, pkg.version
 
+  transform = { replace: {} }
+  # Which files should be replaced on deploy
+  transform.files = ["build/#{relativePath}/index.html", "build/#{relativePath}/#{relativePath}/index.html"]
+  # What should be replace in those files
+  transform.replace["\<\!\-\- TOPBAR \-\-\>"] = '<script type="text/javascript" src="/admin-topbar/?loadKnockout=true&loadJquery=false&loadBootstrapCss=false&loadBootstrapResponsiveCss=false&loadBootstrapDropdown=false"></script>'
+  transform.replace['window.versionDirectory = "";'] = "window.versionDirectory = '//io.vtex.com.br/#{pkg.name}/#{pkg.version}/';"
   transform.replace["/#{relativePath}/"] = "//io.vtex.com.br/#{pkg.name}/#{pkg.version}/"
 
+  # Replace contents on files before deploy following rules in `transform.replace` map.
+  deployCopyProcess = (contents, srcpath) ->
+    if srcpath in transform.files
+      console.log srcpath
+      for k, v of transform.replace
+        contents = contents.replace(new RegExp(k, 'g'), v)
+    return contents
+
+  # Deploys this project to the S3 vtex-io bucket, accessible from io.vtex.com.br/{package.name}/{package.version}/
   deploy = ->
     done = @async()
     dryRun = grunt.option('dry-run')
@@ -27,10 +39,15 @@ module.exports = (grunt) ->
     deployer = new S3Deployer(pkg, client, dryrun: dryRun)
     deployer.deploy().then done, done, console.log
 
-  # Project configuration.
-  grunt.initConfig
+  # Add proxy and mock middlewares to grunt connect
+  middleware = (connect, options) ->
+    proxy = proxy.proxyRequest
+    middlewares = [proxy, connect.static('./build/')]
+    middlewares.unshift mock(verbose: true) if grunt.option('mock')
+    return middlewares
 
   # Tasks
+  config =
     clean:
       main: ['build', 'deploy']
 
@@ -54,16 +71,11 @@ module.exports = (grunt) ->
           expand: true
           cwd: "build/#{relativePath}/"
           src: ['**']
-          dest: path.join(pkg.deploy, pkg.version)
+          dest: deployPath
         ]
         options:
           processContentExclude: ['**/*.{png,gif,jpg,ico,psd}']
-          process: (contents, srcpath) ->
-            if srcpath in transform.files
-              console.log srcpath
-              for k, v of transform.replace
-                contents = contents.replace(new RegExp(k, 'g'), v)
-            return contents
+          process: deployCopyProcess
 
     coffee:
       main:
@@ -123,11 +135,7 @@ module.exports = (grunt) ->
           open: "http://localhost:80/#{relativePath}/"
           hostname: "*"
           port: 80
-          middleware: (connect, options) ->
-            proxy = require("grunt-connect-proxy/lib/utils").proxyRequest
-            middlewares = [proxy, connect.static('./build/')]
-            middlewares.unshift require('connect-mock')(verbose: true) if grunt.option('mock')
-            return middlewares
+          middleware: middleware
         proxies: [
           context: ['/', "!/#{relativePath}"]
           host: 'portal.vtexcommerce.com.br'
@@ -153,19 +161,19 @@ module.exports = (grunt) ->
         files: ['src/i18n/**/*.json', 'src/index.html', 'src/lib/**/*.*']
         tasks: ['copy']
 
-  console.log grunt.config.data.usemin.html
+  tasks =
+    # Building block tasks
+    build: ['clean', 'copy:main', 'nginclude', 'coffee', 'less', 'ngtemplates']
+    min: ['useminPrepare', 'concat', 'uglify', 'usemin'] # minifies files
+    # Deploy tasks
+    dist: ['build', 'min', 'copy:deploy'] # Dist - minifies files
+    test: []
+    vtex_deploy: deploy
+    # Development tasks
+    default: ['build', 'configureProxies:server', 'connect', 'watch']
+    devmin: ['build', 'min', 'configureProxies:server', 'connect:server:keepalive'] # Minifies files and serve
 
+  # Project configuration.
+  grunt.initConfig config
   grunt.loadNpmTasks name for name of pkg.devDependencies when name[0..5] is 'grunt-'
-
-  # Build block tasks
-  grunt.registerTask 'build', ['clean', 'copy:main', 'nginclude', 'coffee', 'less', 'ngtemplates']
-  grunt.registerTask 'min', ['useminPrepare', 'concat', 'uglify', 'usemin'] # minifies files
-
-  # Deploy tasks
-  grunt.registerTask 'dist', ['build', 'min', 'copy:deploy'] # Dist - minifies files
-  grunt.registerTask 'test', []
-  grunt.registerTask 'vtex_deploy', deploy
-
-  # Development tasks
-  grunt.registerTask 'default', ['build', 'configureProxies:server', 'connect', 'watch']
-  grunt.registerTask 'devmin', ['build', 'min', 'configureProxies:server', 'connect:server:keepalive'] # Minifies files and serve
+  grunt.registerTask taskName, taskArray for taskName, taskArray of tasks
