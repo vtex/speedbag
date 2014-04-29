@@ -1,50 +1,19 @@
-path = require 'path'
-knox = require 'knox'
-S3Deployer = require 'deploy-s3'
-fs = require 'fs'
-proxy = require 'grunt-connect-proxy/lib/utils'
-mock = require 'connect-mock'
+DeployUtils = require './vtex-deploy-utils'
 
 module.exports = (grunt) ->
   pkg = grunt.file.readJSON('package.json')
   relativePath = pkg.paths[0].slice(1)
-  deployPath = path.join pkg.deploy, pkg.version
+  r = {}
+  # Parts of the index we wish to replace on deploy
+  r[pkg.paths[0]] = "//io.vtex.com.br/#{pkg.name}/#{pkg.version}"
+  r["\<\!\-\- TOPBAR \-\-\>"] = "<script type=\"text/javascript\" src=\"/admin-topbar/?loadKnockout=true&loadJquery=false&loadBootstrapCss=false&loadBootstrapResponsiveCss=false&loadBootstrapDropdown=false\"></script>"
+  r["window.versionDirectory = \"\";"] = "window.versionDirectory = '//io.vtex.com.br/#{pkg.name}/#{pkg.version}/';"
 
-  transform = { replace: {} }
-  # Which files should be replaced on deploy
-  transform.files = ["build/#{relativePath}/index.html", "build/#{relativePath}/#{relativePath}/index.html"]
-  # What should be replace in those files
-  transform.replace["\<\!\-\- TOPBAR \-\-\>"] = '<script type="text/javascript" src="/admin-topbar/?loadKnockout=true&loadJquery=false&loadBootstrapCss=false&loadBootstrapResponsiveCss=false&loadBootstrapDropdown=false"></script>'
-  transform.replace['window.versionDirectory = "";'] = "window.versionDirectory = '//io.vtex.com.br/#{pkg.name}/#{pkg.version}/';"
-  transform.replace["/#{relativePath}/"] = "//io.vtex.com.br/#{pkg.name}/#{pkg.version}/"
-
-  # Replace contents on files before deploy following rules in `transform.replace` map.
-  deployCopyProcess = (contents, srcpath) ->
-    if srcpath in transform.files
-      console.log srcpath
-      for k, v of transform.replace
-        contents = contents.replace(new RegExp(k, 'g'), v)
-    return contents
-
-  # Deploys this project to the S3 vtex-io bucket, accessible from io.vtex.com.br/{package.name}/{package.version}/
-  deploy = ->
-    done = @async()
-    dryRun = grunt.option('dry-run')
-    if dryRun
-      credentials = {key: 1, secret: 2}
-    else
-      credentials = JSON.parse fs.readFileSync '/credentials.json'
-    credentials.bucket = 'vtex-io'
-    client = knox.createClient credentials
-    deployer = new S3Deployer(pkg, client, dryrun: dryRun)
-    deployer.deploy().then done, done, console.log
-
-  # Add proxy and mock middlewares to grunt connect
-  middleware = (connect, options) ->
-    proxy = proxy.proxyRequest
-    middlewares = [proxy, connect.static('./build/')]
-    middlewares.unshift mock(verbose: true) if grunt.option('mock')
-    return middlewares
+  utils = DeployUtils pkg,
+    dryRun: grunt.option("dry-run")
+    replace:
+      map: r
+      glob: "build/**/index.html"
 
   # Tasks
   config =
@@ -66,16 +35,7 @@ module.exports = (grunt) ->
           src: ['src/index.html']
           dest: "build/#{relativePath}/#{relativePath}/index.html"
         ]
-      deploy:
-        files: [
-          expand: true
-          cwd: "build/#{relativePath}/"
-          src: ['**']
-          dest: deployPath
-        ]
-        options:
-          processContentExclude: ['**/*.{png,gif,jpg,ico,psd}']
-          process: deployCopyProcess
+      deploy: utils.copyDeployConfig
 
     coffee:
       main:
@@ -135,7 +95,11 @@ module.exports = (grunt) ->
           open: "http://localhost:80/#{relativePath}/"
           hostname: "*"
           port: 80
-          middleware: middleware
+          middleware: (connect) ->
+            proxy = require('grunt-connect-proxy/lib/utils').proxyRequest
+            middlewares = [proxy, connect.static('./build/')]
+            middlewares.unshift require('connect-mock')(verbose: true) if grunt.option('mock')
+            return middlewares
         proxies: [
           context: ['/', "!/#{relativePath}"]
           host: 'portal.vtexcommerce.com.br'
@@ -168,7 +132,7 @@ module.exports = (grunt) ->
     # Deploy tasks
     dist: ['build', 'min', 'copy:deploy'] # Dist - minifies files
     test: []
-    vtex_deploy: deploy
+    vtex_deploy: utils.deployFunction
     # Development tasks
     default: ['build', 'configureProxies:server', 'connect', 'watch']
     devmin: ['build', 'min', 'configureProxies:server', 'connect:server:keepalive'] # Minifies files and serve
