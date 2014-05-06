@@ -21,6 +21,7 @@
     "connect-http-please": "^0.1.1",
     "connect-livereload": "git://github.com/gadr/connect-livereload",
     "connect-mock": "~0.1.0",
+    "connect-tryfiles": "^0.2.1",
     "deploy-s3": "~0.1.0",
     "glob": "^3.2.9",
     "grunt": "~0.4.2",
