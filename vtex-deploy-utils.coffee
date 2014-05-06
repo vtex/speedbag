@@ -13,7 +13,6 @@ replace = (key, value) ->
 module.exports = (pkg, options) ->
   deployPath = path.join pkg.deploy, pkg.version
   relativePath = pkg.paths[0].slice(1)
-  replaceFiles = if options.replace then glob.sync options.replace.glob else []
   options.dryRun or= false
 
   # Deploys this project to the S3 vtex-io bucket, accessible from io.vtex.com.br/{package.name}/{package.version}/
@@ -39,6 +38,7 @@ module.exports = (pkg, options) ->
       processContentExclude: ['**/*.{png,gif,jpg,ico,psd}']
       # Replace contents on files before deploy following rules in options.replace.map.
       process: (contents, srcpath) ->
+        replaceFiles = if options.replace then glob.sync options.replace.glob else []
         for file in replaceFiles
           if file.indexOf(srcpath) >= 0
             console.log "Replacing file...", file
