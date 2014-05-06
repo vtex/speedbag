@@ -15,6 +15,26 @@ module.exports = (grunt) ->
       map: r
       glob: "build/**/index.html"
 
+  environment = process.env.VTEX_HOST or 'vtexcommercebeta'
+
+  verbose = grunt.option('verbose')
+
+  open = "http://basedevmkp.vtexlocal.com.br/#{relativePath}/"
+
+  errorHandler = (err, req, res, next) ->
+    errString = err.code?.red ? err.toString().red
+    grunt.log.warn(errString, req.url.yellow)
+    
+  middlewares = [
+    require('connect-livereload')({disableAcceptEncoding: true})
+    require('connect-http-please')(replaceHost: ((h) -> h.replace("vtexlocal", environment)), {verbose: verbose})
+    require('connect-tryfiles')('**', "http://portal.#{environment}.com.br:80", {cwd: 'build/', verbose: verbose})
+    require('connect').static('./build/')
+    errorHandler
+  ]
+  
+  middlewares = middlewares.unshift(require('connect-open')({verbose: verbose})) if grunt.option 'mock'
+    
   # Tasks
   config =
     clean:
@@ -89,24 +109,12 @@ module.exports = (grunt) ->
       html: ["build/#{relativePath}/index.html", "build/#{relativePath}/#{relativePath}/index.html"]
 
     connect:
-      server:
+      http:
         options:
-          livereload: true
-          open: "http://localhost:80/#{relativePath}/"
           hostname: "*"
+          open: open
           port: 80
-          middleware: (connect) ->
-            proxy = require('grunt-connect-proxy/lib/utils').proxyRequest
-            middlewares = [proxy, connect.static('./build/')]
-            middlewares.unshift require('connect-mock')(verbose: true) if grunt.option('mock')
-            return middlewares
-        proxies: [
-          context: ['/', "!/#{relativePath}"]
-          host: 'portal.vtexcommerce.com.br'
-          headers: {
-            "X-VTEX-Router-Backend-EnvironmentType": "beta"
-          }
-        ]
+          middleware: middlewares
 
     watch:
       options:
@@ -134,8 +142,8 @@ module.exports = (grunt) ->
     test: []
     vtex_deploy: utils.deployFunction
     # Development tasks
-    default: ['build', 'configureProxies:server', 'connect', 'watch']
-    devmin: ['build', 'min', 'configureProxies:server', 'connect:server:keepalive'] # Minifies files and serve
+    default: ['build', 'connect', 'watch']
+    devmin: ['build', 'min', 'connect:http:keepalive'] # Minifies files and serve
 
   # Project configuration.
   grunt.initConfig config
