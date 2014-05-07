@@ -26,7 +26,7 @@ module.exports = (grunt) ->
     grunt.log.warn(errString, req.url.yellow)
     
   middlewares = [
-    require('connect-livereload')({disableAcceptEncoding: true})
+    require('connect-livereload')({disableCompression: true})
     require('connect-http-please')(replaceHost: ((h) -> h.replace("vtexlocal", environment)), {verbose: verbose})
     require('connect-tryfiles')('**', "http://portal.#{environment}.com.br:80", {cwd: 'build/', verbose: verbose})
     require('connect').static('./build/')
