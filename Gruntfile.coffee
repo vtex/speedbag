@@ -119,13 +119,16 @@ module.exports = (grunt) ->
     watch:
       options:
         livereload: true
-        spawn: false
       coffee:
         files: ['src/coffee/**/*.coffee']
         tasks: ['coffee']
       less:
+        options:
+          livereload: false
         files: ['src/style/**/*.less']
         tasks: ['less']
+      css:
+        files: ['build/**/*.css']
       templates:
         files: ['src/views/**/*.html', 'src/partials/**/*.html']
         tasks: ['nginclude', 'ngtemplates']
