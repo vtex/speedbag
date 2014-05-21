@@ -33,7 +33,7 @@ module.exports = (grunt) ->
     errorHandler
   ]
   
-  middlewares = middlewares.unshift(require('connect-open')({verbose: verbose})) if grunt.option 'mock'
+  middlewares = middlewares.unshift(require('connect-mock')({verbose: verbose})) if grunt.option 'mock'
     
   # Tasks
   config =
