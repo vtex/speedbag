@@ -113,7 +113,7 @@ module.exports = (grunt) ->
         options:
           hostname: "*"
           open: open
-          port: 80
+          port: process.env.PORT || 80
           middleware: middlewares
 
     watch:
