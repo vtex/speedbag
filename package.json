@@ -22,7 +22,6 @@
     "connect-livereload": "git://github.com/gadr/connect-livereload#7f4a0b7",
     "connect-mock": "~0.1.0",
     "connect-tryfiles": "^0.2.1",
-    "deploy-s3": "~0.1.0",
     "glob": "^3.2.9",
     "grunt": "~0.4.2",
     "grunt-angular-templates": "~0.4.1",
@@ -37,7 +36,7 @@
     "grunt-contrib-watch": "~0.5.1",
     "grunt-nginclude": "0.4.x",
     "grunt-usemin": "~2.0.2",
-    "knox": "~0.8.9"
+    "grunt-shell": "^0.7.0"
   },
   "repository": {
     "type": "git",

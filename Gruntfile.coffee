@@ -1,24 +1,15 @@
-DeployUtils = require './vtex-deploy-utils'
-
+glob = require 'glob'
 module.exports = (grunt) ->
   pkg = grunt.file.readJSON('package.json')
   relativePath = pkg.paths[0].slice(1)
   r = {}
   # Parts of the index we wish to replace on deploy
   r[pkg.paths[0]] = "//io.vtex.com.br/#{pkg.name}/#{pkg.version}"
-  r["\<\!\-\- TOPBAR \-\-\>"] = "<script type=\"text/javascript\" src=\"/admin-topbar/?loadKnockout=true&loadJquery=false&loadBootstrapCss=false&loadBootstrapResponsiveCss=false&loadBootstrapDropdown=false\"></script>"
-  r["window.versionDirectory = \"\";"] = "window.versionDirectory = '//io.vtex.com.br/#{pkg.name}/#{pkg.version}/';"
 
-  utils = DeployUtils pkg,
-    dryRun: grunt.option("dry-run")
-    replace:
-      map: r
-      glob: "build/**/index.html"
-
+  replaceGlob = "build/**/index.html"
+  dryrun = if grunt.option('dry-run') then '--dryrun' else ''
   environment = process.env.VTEX_HOST or 'vtexcommercebeta'
-
   verbose = grunt.option('verbose')
-
   open = "http://basedevmkp.vtexlocal.com.br/#{relativePath}/"
 
   errorHandler = (err, req, res, next) ->
@@ -55,7 +46,28 @@ module.exports = (grunt) ->
           src: ['src/index.html']
           dest: "build/#{relativePath}/#{relativePath}/index.html"
         ]
-      deploy: utils.copyDeployConfig
+      deploy:
+        files: [
+          expand: true
+          cwd: "build/#{relativePath}/"
+          src: ['**']
+          dest: "#{pkg.deploy}/#{pkg.version}"
+        ]
+        options:
+          processContentExclude: ['**/*.{png,gif,jpg,ico,psd}']
+          # Replace contents on files before deploy following rules in options.replace.map.
+          process: (contents, srcpath) ->
+            replaceFiles = glob.sync replaceGlob
+            for file in replaceFiles when file.indexOf(srcpath) >= 0
+                console.log "Replacing file...", file
+                for k, v of r
+                  console.log "Replacing key", k, "with value", v
+                  contents = contents.replace(new RegExp(k, 'g'), v)
+            return contents
+
+    shell:
+      deploy:
+        command: "AWS_CONFIG_FILE=/.aws-config-front aws s3 sync --size-only #{dryrun} #{pkg.deploy} s3://vtex-io/#{pkg.name}/"
 
     coffee:
       main:
@@ -143,7 +155,7 @@ module.exports = (grunt) ->
     # Deploy tasks
     dist: ['build', 'min', 'copy:deploy'] # Dist - minifies files
     test: []
-    vtex_deploy: utils.deployFunction
+    vtex_deploy: ['shell:deploy']
     # Development tasks
     default: ['build', 'connect', 'watch']
     devmin: ['build', 'min', 'connect:http:keepalive'] # Minifies files and serve
