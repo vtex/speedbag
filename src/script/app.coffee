@@ -1,9 +1,7 @@
-
 angular.module('app', ['ngRoute', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap'])
   .config ($translateProvider) ->
-    versionDirectory = if window.versionDirectory is undefined then 'base/src/' else ''
     $translateProvider.useStaticFilesLoader
-      prefix: versionDirectory + 'i18n/'
+      prefix: '/admin/speedbag/i18n/'
       suffix: '.json'
 
     $translateProvider.preferredLanguage 'pt-BR'

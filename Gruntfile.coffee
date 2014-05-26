@@ -7,7 +7,7 @@ module.exports = (grunt) ->
 
   tasks =
     # Building block tasks
-    build: ['clean', 'copy:main', 'copy:pkg', 'copy:janus_index', 'nginclude', 'coffee', 'less', 'ngtemplates']
+    build: ['clean', 'concat:templates', 'copy:main', 'copy:pkg', 'copy:janus_index', 'nginclude', 'coffee', 'less', 'ngtemplates']
     min: ['useminPrepare', 'concat', 'uglify', 'usemin'] # minifies files
     # Deploy tasks
     dist: ['build', 'min', 'copy:deploy'] # Dist - minifies files
