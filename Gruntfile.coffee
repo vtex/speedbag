@@ -12,7 +12,7 @@ module.exports = (grunt) ->
     # Deploy tasks
     dist: ['build', 'min', 'copy:deploy'] # Dist - minifies files
     test: []
-    vtex_deploy: ['shell:deploy']
+    vtex_deploy: ['shell:cp']
     # Development tasks
     default: ['build', 'connect', 'watch']
     devmin: ['build', 'min', 'connect:http:keepalive'] # Minifies files and serve
