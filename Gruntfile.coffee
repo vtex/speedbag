@@ -19,5 +19,5 @@ module.exports = (grunt) ->
 
   # Project configuration.
   grunt.initConfig config
-  grunt.loadNpmTasks name for name of pkg.devDependencies when name[0..5] is 'grunt-'
+  grunt.loadNpmTasks name for name of pkg.devDependencies when name[0..5] is 'grunt-' and name isnt 'grunt-vtex'
   grunt.registerTask taskName, taskArray for taskName, taskArray of tasks
