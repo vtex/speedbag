@@ -28,10 +28,10 @@
     "grunt-contrib-less": "~0.8.3",
     "grunt-contrib-uglify": "~0.2.2",
     "grunt-contrib-watch": "~0.5.1",
-    "grunt-nginclude": "0.4.x",
+    "grunt-nginclude": "0.3.x",
     "grunt-usemin": "~2.0.2",
     "grunt-shell": "^0.7.0",
-    "grunt-vtex": "^0.3.0"
+    "grunt-vtex": "^0.4.0"
   },
   "repository": {
     "type": "git",
