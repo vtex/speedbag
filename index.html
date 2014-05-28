@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+        <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+        <style>
+            .reveal ul li, .reveal ol li {
+                font-size: 150%;
+                line-height: 150%;
+            }
+            .reveal a {
+                font-size: 150%;
+                line-height: 150%;
+            }
+        </style>
+    </head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Speedbag</h1>
+					<h3>Onde, como, por quê?</h3>
+				</section>
+                
+                <section>
+                    <h1>Onde?</h1>
+                    <a href="https://github.com/vtex/speedbag">https://github.com/vtex/speedbag</a>
+                </section>
+                
+                <section>
+                    <h1>Como?</h1>
+                    <ol>
+                        <li>npm install -g grunt-cli</li>
+                        <li>cd speedbag</li>
+                        <li>npm install</li>
+                        <li>grunt --verbose</li>
+                    </ol>
+                </section>
+                
+                <section>
+                    <h1>Por quê?</h1>
+                    <br/>
+                    <h2 class="fragment roll-in">Vários motivos</h2>
+                </section>
+                
+                <section>
+                    <h1>CoffeeScript</h1>
+                    <br/>
+                    <h2 class="fragment roll-in">Menos código, menos bugs.</h2>
+                    <h2 class="fragment roll-in">Esconde partes feias.</h2>
+                    <h2 class="fragment roll-in">Classes!</h2>
+                </section>
+                
+                <section>
+                    <h1>LESS</h1>
+                    <br/>
+                    <h2 class="fragment roll-in">Menos código, menos bugs.</h2>
+                    <h2 class="fragment roll-in">Variáveis!</h2>
+                    <h2 class="fragment roll-in">Reuso!</h2>
+                </section>
+                
+                <section>
+                    <h1>LiveReload</h1>
+                    <br/>
+                    <h2 class="fragment roll-in">Menos código, menos bugs.</h2>
+                    <h2 class="fragment roll-in">Brincadeira.</h2>
+                    <h2 class="fragment roll-in">Não apertar F5!!!</h2>
+                </section>
+                
+                <section>
+                    <h1>Minificação</h1>
+                    <br/>
+                    <h2 class="fragment roll-in">de JS</h2>
+                    <h2 class="fragment roll-in">de CSS</h2>
+                    <h2 class="fragment roll-in">Usemin</h2>
+                </section>
+                
+                <section>
+                    <h1>Deploy</h1>
+                    <br/>
+                    <h2 class="fragment roll-in">Deploy no S3 via TeamCity</h2>
+                </section>
+                
+                <section>
+                    <h1>Proxy Reverso</h1>
+                    <br/>
+                    <h2 class="fragment roll-in">Falar com API facilmente</h2>
+                </section>
+                
+                <section>
+                    <h1>Automatização</h1>
+                    <br/>
+                    <h2 class="fragment roll-in">Essa apresentação</h2>
+                    <h2 class="fragment roll-in">vtex/pp</h2>
+                    <h2 class="fragment roll-in">e etc!</h2>
+                </section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
