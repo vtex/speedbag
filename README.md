@@ -32,11 +32,22 @@ The deploy-ready files can be found in the `/deploy` folder.
 ### Folder structure
 
 - `src` - most of your files will be here.
-	- `coffee` - CoffeeScript source files
+	- `script` - CoffeeScript and JS source files
 	- `style` - CSS and LESS source files
+	- `templates` - Knockout JS style templates examples
+	- `views` and `partials` - Angular templates examples
+	- `i18n` - Translations for usage with ng-translate
 	- `index.html` - Your app entry point.
 - `Gruntfile.coffee` - This is the configuration file for grunt. Contains all the build tasks.
 - `build` - this folder will be created after you run a grunt task.
+
+### Grunt VTEX
+
+The Speedbag Gruntfile is actually quite empty.  
+This is because all tasks are defined in the meta-project [grunt-vtex](https://github.com/vtex/grunt-vtex).  
+If you want to contribute an improvement to a task, please do so on that repo.  
+Your Gruntfile should only contain customizations that are very specific to your project.
+
 
 #### Checking dependencies
 
