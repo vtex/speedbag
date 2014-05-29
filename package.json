@@ -31,7 +31,7 @@
     "grunt-nginclude": "0.3.x",
     "grunt-usemin": "~2.0.2",
     "grunt-shell": "^0.7.0",
-    "grunt-vtex": "^0.4.0"
+    "grunt-vtex": "^0.4.1"
   },
   "repository": {
     "type": "git",
