@@ -1,7 +1,7 @@
 angular.module('app', ['ngRoute', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap'])
   .config ($translateProvider) ->
     $translateProvider.useStaticFilesLoader
-      prefix: '/admin/speedbag/i18n/'
+      prefix: '/speedbag/i18n/'
       suffix: '.json'
 
     $translateProvider.preferredLanguage 'pt-BR'

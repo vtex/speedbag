@@ -4,34 +4,23 @@
   "readmeFilename": "README.md",
   "description": "A grunt coffee/less/live-reload/cssmin/uglify/connect/angular/bootstrap/jquery/underscore boilerplate.",
   "main": "index.html",
-  "paths": [
-    "/admin/speedbag"
-  ],
-  "hosts": [
-    "*.vtexcommerce.com.br",
-    "*.vtexcommercebeta.com.br",
-    "*.vtexcommercestable.com.br",
-    "*.vtexcommercealfa.com.br",
-    "*.vtexlocal.com.br"
-  ],
-  "backend": "https://io.vtex.com.br/",
   "deploy": "deploy/",
   "devDependencies": {
     "grunt": "~0.4.5",
     "grunt-angular-templates": "~0.4.1",
     "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-coffee": "~0.8.0",
-    "grunt-contrib-concat": "~0.4.0",
-    "grunt-contrib-connect": "~0.7.1",
-    "grunt-contrib-copy": "~0.5.0",
-    "grunt-contrib-cssmin": "~0.7.0",
-    "grunt-contrib-less": "~0.8.3",
-    "grunt-contrib-uglify": "~0.2.2",
-    "grunt-contrib-watch": "~0.5.1",
+    "grunt-contrib-coffee": "~0.12.0",
+    "grunt-contrib-concat": "~0.5.0",
+    "grunt-contrib-connect": "~0.8.0",
+    "grunt-contrib-copy": "~0.6.0",
+    "grunt-contrib-cssmin": "~0.9.0",
+    "grunt-contrib-less": "~0.11.4",
+    "grunt-contrib-uglify": "~0.6.0",
+    "grunt-contrib-watch": "~0.6.1",
     "grunt-nginclude": "0.3.x",
-    "grunt-usemin": "~2.0.2",
-    "grunt-shell": "^0.7.0",
-    "grunt-vtex": "^0.8.0"
+    "grunt-usemin": "~2.4.0",
+    "grunt-shell": "^1.1.1",
+    "grunt-vtex": "^0.9.0"
   },
   "repository": {
     "type": "git",
