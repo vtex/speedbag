@@ -7,8 +7,12 @@
     <meta name="author" content="VTEX">
     <link rel="stylesheet" href="//io.vtex.com.br/front-libs/bootstrap/3.0.3/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="//io.vtex.com.br/front-libs/font-awesome/4.0.1/css/font-awesome.min.css"/>
+    <!-- build:css /speedbag/style/style.min.css -->
     <link rel="stylesheet" href="/speedbag/style/style.css" media="screen"/>
+    <!-- endbuild -->
+    <!-- build:css /speedbag/style/print.min.css -->
     <link rel="stylesheet" href="/speedbag/style/print.css" media="print" />
+    <!-- endbuild -->
 </head>
 <body>
 <div class="container-narrow">
@@ -51,6 +55,10 @@
         <hr>
 
         <div ng-include="'views/footer.html'"></div>
+
+        <!--remove-->
+        <small>This only appears in development</small>
+        <!--endremove-->
     </div>
 </div>
 <!-- TOPBAR -->

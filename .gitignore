@@ -11,3 +11,5 @@ deploy/
 bower_components/
 .tmp/
 dist/
+npm-debug.log
+
