@@ -16,8 +16,12 @@ module.exports = (grunt) ->
   # Add custom configuration here as needed
   customConfig =
     karma:
-      unit:
+      options:
         configFile: 'karma.conf.coffee'
+      ci:
+        singleRun: true
+      dev:
+        singleRun: false
 
   tasks =
     # Building block tasks
@@ -25,7 +29,8 @@ module.exports = (grunt) ->
     min: ['useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin'] # minifies files
     # Deploy tasks
     dist: ['build', 'min', 'copy:deploy'] # Dist - minifies files
-    test: ['karma']
+    test: ['karma:ci']
+    devtest: ['karma:dev']
     vtex_deploy: ['shell:cp']
     # Development tasks
     default: ['build', 'connect', 'watch']
