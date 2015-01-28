@@ -1,6 +1,6 @@
 {
   "name": "speedbag",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "readmeFilename": "README.md",
   "description": "A grunt coffee/less/live-reload/cssmin/uglify/connect/angular/bootstrap/jquery/underscore boilerplate.",
   "main": "index.html",
