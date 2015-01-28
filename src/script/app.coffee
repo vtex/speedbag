@@ -15,3 +15,5 @@ app.config ($translateProvider) ->
 
 angular.element(document).ready ->
   angular.bootstrap angular.element('#app-container'), ['app']
+
+window.app = app

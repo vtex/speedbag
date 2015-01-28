@@ -14,7 +14,10 @@ module.exports = (grunt) ->
     relativePath: "speedbag"
 
   # Add custom configuration here as needed
-  customConfig = {}
+  customConfig =
+    karma:
+      unit:
+        configFile: 'karma.conf.coffee'
 
   tasks =
     # Building block tasks
@@ -22,7 +25,7 @@ module.exports = (grunt) ->
     min: ['useminPrepare', 'concat', 'uglify', 'cssmin', 'usemin'] # minifies files
     # Deploy tasks
     dist: ['build', 'min', 'copy:deploy'] # Dist - minifies files
-    test: []
+    test: ['karma']
     vtex_deploy: ['shell:cp']
     # Development tasks
     default: ['build', 'connect', 'watch']
