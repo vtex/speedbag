@@ -6,7 +6,7 @@
   "main": "index.html",
   "deploy": "deploy/",
   "devDependencies": {
-    "coffeelint": "~1.6.1",
+    "coffeelint": "~1.8.1",
     "grunt": "~0.4.5",
     "grunt-angular-templates": "~0.5.7",
     "grunt-coffeelint": "0.0.13",
@@ -15,17 +15,17 @@
     "grunt-contrib-concat": "~0.5.0",
     "grunt-contrib-connect": "~0.9.0",
     "grunt-contrib-copy": "~0.7.0",
-    "grunt-contrib-cssmin": "~0.10.0",
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-contrib-less": "~0.12.0",
-    "grunt-contrib-uglify": "~0.6.0",
+    "grunt-contrib-cssmin": "~0.11.0",
+    "grunt-contrib-jshint": "~0.11.0",
+    "grunt-contrib-less": "~1.0.0",
+    "grunt-contrib-uglify": "~0.7.0",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-gh-pages": "~0.9.1",
     "grunt-nginclude": "~0.4.1",
     "grunt-recess": "~1.0.0",
     "grunt-shell": "~1.1.1",
-    "grunt-usemin": "~2.6.2",
-    "grunt-vtex": "~0.11.1"
+    "grunt-usemin": "~3.0.0",
+    "grunt-vtex": "~0.12.0"
   },
   "repository": {
     "type": "git",
