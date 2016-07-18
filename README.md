@@ -1,4 +1,4 @@
-# Speedbag 3
+# Speedbag 4
 
 A grunt coffee/less/live-reload/cssmin/uglify/connect/angular/bootstrap/jquery/underscore boilerplate.
 
