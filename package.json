@@ -5,6 +5,10 @@
   "description": "A grunt coffee/less/live-reload/cssmin/uglify/connect/angular/bootstrap/jquery/underscore boilerplate.",
   "main": "index.html",
   "deploy": "deploy/",
+  "scripts": {
+    "start": "grunt",
+    "dry-run": "grunt dist test vtex_deploy --dry-run"
+  },
   "devDependencies": {
     "coffeelint": "~1.8.1",
     "grunt": "~0.4.5",
