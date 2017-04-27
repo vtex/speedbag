@@ -29,6 +29,8 @@ The deploy-ready files can be found in the `/deploy` folder.
 [TeamCity](http://pachamama.vtexlab.com.br) should pick up your new tag and start a deploy.
 (For details, see [Releasy](https://github.com/vtex/releasy))
 
+Warning: If your project is going to be an admin check [this readme](https://github.com/vtex/ux/tree/master/deploy) or check [releases-ui](https://github.com/vtex/releases-ui) as an exemple
+
 ### Folder structure
 
 - `src` - most of your files will be here.
